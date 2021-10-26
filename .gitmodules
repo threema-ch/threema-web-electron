@@ -1,0 +1,3 @@
+[submodule "app/dependencies/threema-web"]
+	path = app/dependencies/threema-web
+	url = https://github.com/threema-ch/threema-web.git

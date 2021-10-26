@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "target": "es2017",
+    "module": "commonjs",
+    "noImplicitAny": true,
+    "sourceMap": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "removeComments": true,
+    "outDir": "app/dist",
+    "baseUrl": "app/",
+    "paths": {
+      "*": ["node_modules/*"]
+    }
+  },
+  "include": ["app/src/**/*"],
+  "assets": ["app/src/**/*"]
+}

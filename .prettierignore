@@ -1,0 +1,9 @@
+/node_modules/
+/build/
+/dist/
+/app/node_modules/
+/app/assets/
+/app/build/
+/app/dependencies/
+/app/dist/
+/test/testdata/

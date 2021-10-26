@@ -1,0 +1,9 @@
+{
+    "version" : "0.0.2",
+    "binary" : {
+        "binaryPath": "update.zip",
+        "binarySignature": "untrusted comment: signature from minisign secret key\nRWQVtMw17csmmxyj6TyFXXbKcd68eGmUOZ1+mhfOBJ15EtnDFcjtzpJF2Fz2Bt5x6scuNgOMyK5o3ryFzo9MbT9sBH5Ekh8egQQ=\ntrusted comment: timestamp:1634893580\tfile:testfile.dat\nwbYydF6YCWFH968PP026PfzbJCq7fATpg6ye30SYLatmPnz3ph1QqNHTUuixs37l4jTes8VXyIXBhdpm8OrqAw==\n"
+    },
+    "releaseNotes" : "Hello World",
+    "timestamp": "1"
+}

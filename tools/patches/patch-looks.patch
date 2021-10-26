@@ -1,0 +1,12 @@
+diff --git a/index.html b/index.html
+index 6dccdade..91d02f50 100644
+--- a/index.html
++++ b/index.html
+@@ -97,6 +97,6 @@
+     <div id="main-wrapper" ng-cloak ng-class="{wide: ctrl.showMessenger()}">
+         <header>
+             <h1 id="title" aria-label="Threema Web Logo">
+-                <span id="logo" ng-include src="'img/logo.svg?v=[[VERSION]]'"></span>
++                <!-- <span id="logo" ng-include src="'img/logo.svg?v=[[VERSION]]'"></span> -->
+             </h1>
+         </header>

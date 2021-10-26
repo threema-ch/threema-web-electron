@@ -1,0 +1,9 @@
+node_modules/
+out/
+dist/
+release-builds/
+build/
+coverage/
+.nyc_output/
+.npm/
+test-results.xml

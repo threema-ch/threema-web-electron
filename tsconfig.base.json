@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "types": [],
+    "target": "esnext",
+    "module": "commonjs",
+    "moduleResolution": "node",
+
+    "baseUrl": ".",
+    "resolveJsonModule": true,
+
+    "allowUnreachableCode": false,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "importsNotUsedAsValues": "error",
+    "isolatedModules": true,
+    "newLine": "lf",
+    "noEmitOnError": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "removeComments": true,
+    "sourceMap": true,
+    "strict": true
+  },
+
+  "include": []
+}

@@ -1,0 +1,94 @@
+diff --git a/src/helpers/browser_info.ts b/src/helpers/browser_info.ts
+index 8531f64f..43b528fa 100644
+--- a/src/helpers/browser_info.ts
++++ b/src/helpers/browser_info.ts
+@@ -68,6 +68,11 @@ export class BrowserInfo {
+             case threema.BrowserName.Safari:
+                 description = 'Safari ' + this.version;
+                 break;
++            case threema.BrowserName.win32Desktop:
++            case threema.BrowserName.linuxDesktop:
++            case threema.BrowserName.macosDesktop:
++                description = 'Threema for Desktop ' + this.version;
++                break;
+         }
+         if (this.mobile) {
+             description += ' [Mobile]';
+diff --git a/src/partials/welcome.ts b/src/partials/welcome.ts
+index 39133142..df4c00d8 100644
+--- a/src/partials/welcome.ts
++++ b/src/partials/welcome.ts
+@@ -170,6 +170,7 @@ class WelcomeController {
+                 this.log.warn('Edge is too old (' + version + ' < ' + minVersions.EDGE + ')');
+                 this.showBrowserWarning();
+             }
++        } else if (this.browser.name === threema.BrowserName.win32Desktop || this.browser.name === threema.BrowserName.macosDesktop || this.browser.name === threema.BrowserName.linuxDesktop) {
+         } else {
+             this.log.warn('Non-supported browser, please use Chrome, Firefox, Edge or Opera');
+             this.showBrowserWarning();
+diff --git a/src/services/browser.ts b/src/services/browser.ts
+index c405e0d4..4b972718 100644
+--- a/src/services/browser.ts
++++ b/src/services/browser.ts
+@@ -45,11 +45,17 @@ export class BrowserService {
+                 edge: false,
+                 opera: false,
+                 safari: false,
++                macosDesktop: false,
++                win32Desktop: false,
++                linuxDesktop: false,
+             };
+ 
+             const uagent = this.$window.navigator.userAgent.toLowerCase();
+ 
+-            browser.chrome = /webkit/.test(uagent) && /chrome/.test(uagent) && !/edg/.test(uagent);
++            browser.macosDesktop = /darwinthreemadesktop/.test(uagent) 
++            browser.win32Desktop = /win32threemadesktop/.test(uagent) 
++            browser.linuxDesktop = /linuxthreemadesktop/.test(uagent) 
++            browser.chrome = /webkit/.test(uagent) && /chrome/.test(uagent) && !/edg/.test(uagent) && !browser.macosDesktop && !browser.win32Desktop && !browser.linuxDesktop;
+             browser.chromeIos = /mozilla/.test(uagent) && /crios/.test(uagent);
+             browser.firefox = /mozilla/.test(uagent) && /firefox/.test(uagent);
+             browser.firefoxIos = /mozilla/.test(uagent) && /fxios/.test(uagent);
+@@ -80,6 +86,12 @@ export class BrowserService {
+                         b = 'crios';
+                     } else if (x === 'safari') {
+                         b = 'version';
++                    } else if (x === 'macosDesktop') {
++                      b = 'darwinthreemadesktop'
++                    } else if (x === 'win32Desktop') {
++                      b = 'win32threemadesktop'
++                    } else if (x === 'linuxDesktop') {
++                      b = 'linuxthreemadesktop'
+                     } else {
+                         b = x;
+                     }
+@@ -124,6 +136,15 @@ export class BrowserService {
+             if (browser.opera) {
+                 this.browser = new BrowserInfo(uagent, BrowserName.Opera, version);
+             }
++            if (browser.win32Desktop) {
++                this.browser = new BrowserInfo(uagent, BrowserName.win32Desktop, version);
++            }
++            if (browser.macosDesktop) {
++                this.browser = new BrowserInfo(uagent, BrowserName.macosDesktop, version);
++            }
++            if (browser.linuxDesktop) {
++                this.browser = new BrowserInfo(uagent, BrowserName.linuxDesktop, version);
++            }
+         }
+ 
+         return this.browser;
+diff --git a/src/threema.d.ts b/src/threema.d.ts
+index 34599db3..32992a2a 100644
+--- a/src/threema.d.ts
++++ b/src/threema.d.ts
+@@ -540,6 +540,9 @@ declare namespace threema {
+         Edge = 'edge',
+         Opera = 'opera',
+         Safari = 'safari',
++        macosDesktop = 'macosThreemaDesktop',
++        win32Desktop = 'win32ThreemaDesktop',
++        linuxDesktop = 'linuxThreemaDesktop',
+     }
+ 
+     interface PromiseRequestResult<T> {

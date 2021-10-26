@@ -1,0 +1,10 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["dom", "esnext"],
+    "types": ["chai", "mocha", "node"],
+    "module": "commonjs"
+  },
+
+  "include": ["**/*.ts"]
+}

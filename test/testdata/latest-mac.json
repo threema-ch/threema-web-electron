@@ -1,0 +1,9 @@
+{
+  "version": "0.0.2",
+  "binary": {
+    "binaryPath": "update.zip",
+    "binarySignature": "1"
+  },
+  "releaseNotes": "Hello World",
+  "timestamp": "1"
+}

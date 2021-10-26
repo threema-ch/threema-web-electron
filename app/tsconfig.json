@@ -1,0 +1,11 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["dom", "esnext"],
+    "types": ["electron", "node"],
+    "outDir": "./dist",
+    "skipLibCheck": true
+  },
+
+  "include": ["src/**/*.ts"]
+}
