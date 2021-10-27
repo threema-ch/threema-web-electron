@@ -32,6 +32,10 @@ Threema for desktop is built on top of the existing
 
 To build Threema for desktop, follow the steps below.
 
+**Step 0: Ensure that Git submodules are checked out**
+
+    git submodule update --init
+
 **Step 1: Build Threema Web**
 
     export DEV_ENV=development
