@@ -152,7 +152,7 @@
           "name": "Threema",
           "executableName": "threema-web",
           "platform": "linux",
-          "iconPath": "app/assets/icons/png/consumer-128x128.png",
+          "iconPath": "app/assets/icons/png/consumer-512x512.png",
           "nodeModulesPath": "/resources/app/node_modules"
         },
         "work": {
@@ -160,7 +160,7 @@
           "name": "Threema Work",
           "executableName": "threema-work-web",
           "platform": "linux",
-          "iconPath": "app/assets/icons/png/work-128x128.png",
+          "iconPath": "app/assets/icons/png/work-512x512.png",
           "nodeModulesPath": "/resources/app/node_modules"
         },
         "red": {
@@ -168,7 +168,7 @@
           "name": "Threema Red",
           "executableName": "threema-red-web",
           "platform": "linux",
-          "iconPath": "app/assets/icons/png/red-128x128.png",
+          "iconPath": "app/assets/icons/png/red-512x512.png",
           "nodeModulesPath": "/resources/app/node_modules"
         }
       }
