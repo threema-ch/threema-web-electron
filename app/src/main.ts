@@ -87,6 +87,16 @@ async function start(session: electron.Session): Promise<void> {
 
   log.info("After handleSquirrelEvent");
 
+  log.info("Before argument handling");
+  for (const arg of process.argv) {
+    log.info(`Argument is ${arg}`);
+    if (arg === "--reload-on-suspend") {
+      log.info(`handlePowerMonitor `);
+      handlePowerMonitor(electron.powerMonitor);
+    }
+  }
+  log.info("After argument handling");
+
   log.info("Before dictionary handling");
 
   // To disable the dictionary downloads we need to set a custom download URL
@@ -450,6 +460,16 @@ function getIconLocation(): string {
     `png`,
     `${flavour}-512x512.png`,
   );
+}
+
+function handlePowerMonitor(powerMonitor: electron.PowerMonitor): void {
+  powerMonitor.on("suspend", () => {
+    log.info(`We are suspending`);
+    if (process.platform === "linux") {
+      log.info("Reload because we are suspending");
+      window?.webContents.reload();
+    }
+  });
 }
 
 async function setMinimalAsDefault(): Promise<void> {
