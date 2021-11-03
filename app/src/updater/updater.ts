@@ -126,15 +126,22 @@ export class Updater {
         detail: locale.localized("updateFailedDetailMessage"),
       };
 
-      void dialog.showMessageBox(dialogOpts).then(({response}) => {
-        if (response === 0) {
-          log.info("User confirmed");
+      dialog
+        .showMessageBox(dialogOpts)
+        .then(({response}) => {
+          if (response === 0) {
+            log.info("User confirmed");
 
-          setTimeout(() => {
-            this._updateErrorShown = false;
-          }, 15 * MINUTE);
-        }
-      });
+            setTimeout(() => {
+              this._updateErrorShown = false;
+            }, 15 * MINUTE);
+          }
+        })
+        .catch((error) => {
+          log.error(
+            `An error occurred while trying to show a dialogue: ${error}`,
+          );
+        });
     }
   }
 
@@ -145,11 +152,18 @@ export class Updater {
   ): void {
     const dialogOpts = this._getDialogOpts(releaseNotes, locale);
 
-    void dialog.showMessageBox(dialogOpts).then(({response}) => {
-      if (response === 0) {
-        this._autoUpdater.quitAndInstall();
-      }
-    });
+    dialog
+      .showMessageBox(dialogOpts)
+      .then(({response}) => {
+        if (response === 0) {
+          this._autoUpdater.quitAndInstall();
+        }
+      })
+      .catch((error) => {
+        log.error(
+          `An error occurred while trying to show a dialogue: ${error}`,
+        );
+      });
   }
 
   /**

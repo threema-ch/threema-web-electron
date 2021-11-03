@@ -5,6 +5,7 @@ import * as path from "path";
 import * as Updater from "./updater/updater";
 import * as pack from "../package.json";
 import * as log from "electron-log";
+import * as util from "util";
 import {I18n} from "./i18n/i18n";
 import {getMenu} from "./menu";
 import contextMenu from "electron-context-menu";
@@ -39,7 +40,9 @@ if (!hasSingleInstanceLock) {
 
 // Create main BrowserWindow when electron is ready
 electron.app.on("ready", () => {
-  void start(electron.session.defaultSession);
+  start(electron.session.defaultSession).catch((error) => {
+    log.error(`An error occurred when starting the session ${error}`);
+  });
 });
 
 // Dispose context menu when quitting
@@ -64,11 +67,9 @@ function checkForUpdates(updater: Updater.Updater): void {
   // Windows builds cannot apply updates on the first run
   if (process.argv[1] !== "--squirrel-firstrun") {
     const locale = new I18n(electron.app.getLocale());
-    try {
-      void updater.checkAndDownloadUpdates(electron.dialog, locale);
-    } catch (error) {
+    updater.checkAndDownloadUpdates(electron.dialog, locale).catch((error) => {
       log.error(`An error occurred while checking for updates: ${error}`);
-    }
+    });
   } else {
     log.info("Do not do update on first run!");
   }
@@ -76,14 +77,23 @@ function checkForUpdates(updater: Updater.Updater): void {
 
 async function start(session: electron.Session): Promise<void> {
   // Squirrel events should be handled as quickly as possible.
+
+  log.info("Before handleSquirrelEvent");
+
   if (handleSquirrelEvent()) {
     // If we are handling a squirrel event nothing else will happen because the app will quit
     return;
   }
 
+  log.info("After handleSquirrelEvent");
+
+  log.info("Before dictionary handling");
+
   // To disable the dictionary downloads we need to set a custom download URL
   session.setSpellCheckerDictionaryDownloadURL("https://threema.invalid/");
   session.setSpellCheckerEnabled(false);
+
+  log.info("Before dictionary handling");
 
   // We set the properties to their default values even if they are the same as what we want in
   // order to avoid suprises when upgrading to new versions.
@@ -94,6 +104,11 @@ async function start(session: electron.Session): Promise<void> {
     "src",
     "preload.js",
   );
+
+  log.info(
+    `App is ready ${electron.app.isReady()}. About to create new window`,
+  );
+
   window = new electron.BrowserWindow({
     width: 1000,
     height: 800,
@@ -118,6 +133,26 @@ async function start(session: electron.Session): Promise<void> {
       enableWebSQL: false,
     },
   });
+
+  log.info("Created new window");
+
+  window.webContents.on(
+    "did-fail-load",
+    (
+      event: Event,
+      errorCode: number,
+      errorDescription: string,
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      validatedURL: string,
+      isMainFrame: boolean,
+      frameProcessId: number,
+      frameRoutingId: number,
+    ) => {
+      log.error(
+        `An error ocurred while loading webConents with: errorCode ${errorCode}, validatedURL ${validatedURL}, isMainFrame ${isMainFrame}, frameProcessId ${frameProcessId}, frameRoutingId ${frameRoutingId}`,
+      );
+    },
+  );
 
   window.webContents.on("before-input-event", (event, input) => {
     if (input.control && input.shift && input.key.toLowerCase() === "i") {
@@ -159,7 +194,9 @@ async function start(session: electron.Session): Promise<void> {
   }
 
   setInterval(() => {
-    void checkValidity();
+    checkValidity().catch((error) => {
+      log.error(`Could not check the validity because of an error: ${error}`);
+    });
   }, 8 * HOUR);
 
   //Set custom user agent
@@ -181,6 +218,8 @@ async function start(session: electron.Session): Promise<void> {
   await setMinimalAsDefault();
 
   setupMenu(new I18n(electron.app.getLocale()));
+
+  log.info("Finished setupMenu");
 
   // Since we are a single window application we quit if any window is closed
   window.on("closed", () => {
@@ -297,6 +336,11 @@ async function start(session: electron.Session): Promise<void> {
         },
       });
     }
+    log.info(
+      `onHeadersReceived ${details.url}, ${util.inspect(
+        details.responseHeaders,
+      )}, ${util.inspect(details.responseHeaders)}.`,
+    );
     return callback({
       responseHeaders: {
         ...details.responseHeaders,
@@ -354,7 +398,9 @@ electron.app.on("web-contents-created", (_, contents) => {
     // We only allow opening URLs that can be parsed by URL and only allow protocols http and https.
     // Some more details on potential exploits are given in https://benjamin-altpeter.de/shell-openexternal-dangers/.
     if (isSafeForExternalOpen(url)) {
-      void electron.shell.openExternal(url);
+      electron.shell.openExternal(url).catch((error) => {
+        log.error(`An error ocurred while opening an external URL: ${error}`);
+      });
     } else {
       log.warn(`URL was not safe for open ${url}`);
     }

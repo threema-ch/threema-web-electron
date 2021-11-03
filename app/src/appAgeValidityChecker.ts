@@ -1,3 +1,4 @@
+import * as log from "electron-log";
 import type {I18n} from "./i18n/i18n";
 import type {MessageBoxOptions} from "electron/main";
 import {shell} from "electron";
@@ -11,13 +12,24 @@ export async function showOutdatedDialog(
 ): Promise<void> {
   return await new Promise((resolve) => {
     const dialogOpts = getDialogOpts(locale);
-    void dialog.showMessageBox(dialogOpts).then(async ({response}) => {
-      await shell.openExternal("https://threema.ch/faq/web_desktop_outdated");
-      if (response === 1) {
-        app.quit();
-        resolve();
-      }
-    });
+    dialog
+      .showMessageBox(dialogOpts)
+      .then(async ({response}) => {
+        await shell
+          .openExternal("https://threema.ch/faq/web_desktop_outdated")
+          .catch((error) => {
+            log.error(`An error ocurred while openining support URL: ${error}`);
+          });
+        if (response === 1) {
+          app.quit();
+          resolve();
+        }
+      })
+      .catch((error) => {
+        log.error(
+          `An error occurred while trying to show a dialogue: ${error}`,
+        );
+      });
   });
 }
 
