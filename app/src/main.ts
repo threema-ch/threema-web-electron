@@ -119,8 +119,10 @@ async function start(session: electron.Session): Promise<void> {
     `App is ready ${electron.app.isReady()}. About to create new window`,
   );
 
+  const windowWidth = 1000;
+
   window = new electron.BrowserWindow({
-    width: 1000,
+    width: windowWidth + 1,
     height: 800,
     title: pack.executableName,
     webPreferences: {
@@ -145,6 +147,16 @@ async function start(session: electron.Session): Promise<void> {
   });
 
   log.info("Created new window");
+
+  if (process.platform === "win32") {
+    // Apparently changing the window size solves the issue with the app not loading
+    // in some cases: https://github.com/electron/electron/issues/18857#issuecomment-944297023
+    // TODO(jf): Hide behind launch argument or other setting.
+    window.once("ready-to-show", () => {
+      window?.show();
+      window?.setBounds({width: windowWidth});
+    });
+  }
 
   window.webContents.on(
     "did-fail-load",
