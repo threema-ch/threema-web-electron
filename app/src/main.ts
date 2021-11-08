@@ -222,7 +222,11 @@ async function start(session: electron.Session): Promise<void> {
   log.debug(`Running in mode: ${process.env.NODE_ENV}`);
   log.info(`Serving app from ${url}`);
 
-  await window.loadURL(url);
+  // According to https://github.com/electron/electron/issues/28208#issue-832312268
+  // setting reloadIgnoringCache solves the issue with the app sometimes not being able to
+  // correctly load the website.
+  // @ts-expect-error: ts-2345
+  await window.loadURL(url, {reloadIgnoringCache: true});
   window.setTitle(pack.executableName);
 
   await setMinimalAsDefault();
