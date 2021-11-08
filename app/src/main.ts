@@ -38,6 +38,13 @@ if (!hasSingleInstanceLock) {
   });
 }
 
+if (process.platform === "win32") {
+  log.error("disableHardwareAcceleration");
+  electron.app.disableHardwareAcceleration();
+} else {
+  log.info("do not disableHardwareAcceleration");
+}
+
 // Create main BrowserWindow when electron is ready
 electron.app.on("ready", () => {
   start(electron.session.defaultSession).catch((error) => {
