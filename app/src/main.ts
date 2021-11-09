@@ -94,12 +94,24 @@ async function start(session: electron.Session): Promise<void> {
 
   log.info("After handleSquirrelEvent");
 
+  let resizeWindow = false;
+  let windowLoadOptions = {};
+
   log.info("Before argument handling");
   for (const arg of process.argv) {
     log.info(`Argument is ${arg}`);
     if (arg === "--reload-on-suspend") {
       log.info(`handlePowerMonitor `);
       handlePowerMonitor(electron.powerMonitor);
+    }
+    if (arg === "--resize-window") {
+      resizeWindow = true;
+    }
+    if (arg === "--ignoreCache") {
+      log.info("Should ignore cache: reloadIgnoringCache: true,");
+      windowLoadOptions = {
+        reloadIgnoringCache: true,
+      };
     }
   }
   log.info("After argument handling");
@@ -155,7 +167,8 @@ async function start(session: electron.Session): Promise<void> {
 
   log.info("Created new window");
 
-  if (process.platform === "win32") {
+  if (process.platform === "win32" && resizeWindow) {
+    log.error("Should resize window");
     // Apparently changing the window size solves the issue with the app not loading
     // in some cases: https://github.com/electron/electron/issues/18857#issuecomment-944297023
     // TODO(jf): Hide behind launch argument or other setting.
@@ -244,8 +257,7 @@ async function start(session: electron.Session): Promise<void> {
   // According to https://github.com/electron/electron/issues/28208#issue-832312268
   // setting reloadIgnoringCache solves the issue with the app sometimes not being able to
   // correctly load the website.
-  // @ts-expect-error: ts-2345
-  await window.loadURL(url, {reloadIgnoringCache: true});
+  await window.loadURL(url, windowLoadOptions);
   window.setTitle(pack.executableName);
 
   await setMinimalAsDefault();
