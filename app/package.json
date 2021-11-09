@@ -3,7 +3,7 @@
   "executableName": "Threema",
   "productName": "threema-consumer-web",
   "flavour": "consumer",
-  "version": "1.0.5-alpha",
+  "version": "1.0.5-beta",
   "appAge": 1635177910086,
   "description": "Threema for desktop is a wrapped version of Threema Web. A multi-device solution will become available at a later date.",
   "main": "dist/src/main.js",
