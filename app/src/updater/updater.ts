@@ -30,14 +30,18 @@ export class Updater {
   private _isRunning = false;
   private _currentlyQueuedVersionNumber?: string;
   private _updateErrorShown = false;
+  private _isSuspended = false;
 
   public constructor(
     private readonly _currentVersion: string,
     private readonly _tempFolder: string,
     certificateSet: string[],
     private readonly _autoUpdater: AutoUpdater,
+    powerMonitor: Electron.PowerMonitor,
   ) {
     Updater._deleteExistingDownloadFolder(this._tempFolder);
+
+    this._handlePowerMonitor(powerMonitor);
 
     this._downloader = new Downloader(
       pack.updateServer.hostname,
@@ -59,7 +63,7 @@ export class Updater {
     dialog: Dialog,
     locale: I18n,
   ): Promise<void> {
-    if (!this._isRunning) {
+    if (!this._isRunning && !this._isSuspended) {
       this._isRunning = true;
 
       try {
@@ -475,6 +479,15 @@ export class Updater {
   }
 
   // Helper functions
+
+  private _handlePowerMonitor(powerMonitor: Electron.PowerMonitor): void {
+    powerMonitor.on("suspend", () => {
+      this._isSuspended = true;
+    });
+    powerMonitor.on("resume", () => {
+      this._isSuspended = false;
+    });
+  }
 
   private _getUpdateMetadataFilename(): string {
     const channel = this._getChannelName();

@@ -196,6 +196,7 @@ async function start(session: electron.Session): Promise<void> {
       electron.app.getPath("temp"),
       pack.serverKeyset,
       electron.autoUpdater,
+      electron.powerMonitor,
     );
 
     setTimeout(() => {
