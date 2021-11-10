@@ -5,7 +5,6 @@ import * as path from "path";
 import * as Updater from "./updater/updater";
 import * as pack from "../package.json";
 import * as log from "electron-log";
-import * as util from "util";
 import {I18n} from "./i18n/i18n";
 import {getMenu} from "./menu";
 import contextMenu from "electron-context-menu";
@@ -40,11 +39,21 @@ if (!hasSingleInstanceLock) {
 
 checkShouldQuitAfterInstallation();
 
+// On windows if 2D canvas is disabled we cannot use hardware accelleration; Otherwise electron
+// will not load the website with error message ERR_FAILED (-2).
 if (process.platform === "win32") {
-  log.error("disableHardwareAcceleration");
-  electron.app.disableHardwareAcceleration();
-} else {
-  log.info("do not disableHardwareAcceleration");
+  try {
+    const enabled2dCanvas = electron.app
+      .getGPUFeatureStatus()
+      ["2d_canvas"].startsWith("enabled");
+
+    if (!enabled2dCanvas) {
+      electron.app.disableHardwareAcceleration();
+    }
+  } catch (error) {
+    log.warn(`Could not check getGPUFeatureStatus: ${error}`);
+    electron.app.disableHardwareAcceleration();
+  }
 }
 
 // Create main BrowserWindow when electron is ready
@@ -87,44 +96,22 @@ function checkForUpdates(updater: Updater.Updater): void {
 async function start(session: electron.Session): Promise<void> {
   // Squirrel events should be handled as quickly as possible.
 
-  log.info("Before handleSquirrelEvent");
-
   if (handleSquirrelEvent()) {
     // If we are handling a squirrel event nothing else will happen because the app will quit
     return;
   }
 
-  log.info("After handleSquirrelEvent");
-
-  let resizeWindow = false;
-  let windowLoadOptions = {};
-
-  log.info("Before argument handling");
   for (const arg of process.argv) {
     log.info(`Argument is ${arg}`);
     if (arg === "--reload-on-suspend") {
       log.info(`handlePowerMonitor `);
       handlePowerMonitor(electron.powerMonitor);
     }
-    if (arg === "--resize-window") {
-      resizeWindow = true;
-    }
-    if (arg === "--ignoreCache") {
-      log.info("Should ignore cache: reloadIgnoringCache: true,");
-      windowLoadOptions = {
-        reloadIgnoringCache: true,
-      };
-    }
   }
-  log.info("After argument handling");
-
-  log.info("Before dictionary handling");
 
   // To disable the dictionary downloads we need to set a custom download URL
   session.setSpellCheckerDictionaryDownloadURL("https://threema.invalid/");
   session.setSpellCheckerEnabled(false);
-
-  log.info("Before dictionary handling");
 
   // We set the properties to their default values even if they are the same as what we want in
   // order to avoid suprises when upgrading to new versions.
@@ -134,10 +121,6 @@ async function start(session: electron.Session): Promise<void> {
     "dist",
     "src",
     "preload.js",
-  );
-
-  log.info(
-    `App is ready ${electron.app.isReady()}. About to create new window`,
   );
 
   const windowWidth = 1000;
@@ -166,19 +149,6 @@ async function start(session: electron.Session): Promise<void> {
       enableWebSQL: false,
     },
   });
-
-  log.info("Created new window");
-
-  if (process.platform === "win32" && resizeWindow) {
-    log.error("Should resize window");
-    // Apparently changing the window size solves the issue with the app not loading
-    // in some cases: https://github.com/electron/electron/issues/18857#issuecomment-944297023
-    // TODO(jf): Hide behind launch argument or other setting.
-    window.once("ready-to-show", () => {
-      window?.show();
-      window?.setBounds({width: windowWidth});
-    });
-  }
 
   window.webContents.on(
     "did-fail-load",
@@ -259,7 +229,7 @@ async function start(session: electron.Session): Promise<void> {
   // According to https://github.com/electron/electron/issues/28208#issue-832312268
   // setting reloadIgnoringCache solves the issue with the app sometimes not being able to
   // correctly load the website.
-  await window.loadURL(url, windowLoadOptions);
+  await window.loadURL(url);
   window.setTitle(pack.executableName);
 
   await setMinimalAsDefault();
@@ -383,11 +353,6 @@ async function start(session: electron.Session): Promise<void> {
         },
       });
     }
-    log.info(
-      `onHeadersReceived ${details.url}, ${util.inspect(
-        details.responseHeaders,
-      )}, ${util.inspect(details.responseHeaders)}.`,
-    );
     return callback({
       responseHeaders: {
         ...details.responseHeaders,
