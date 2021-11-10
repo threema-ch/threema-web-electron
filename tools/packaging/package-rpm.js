@@ -23,7 +23,7 @@ async function main() {
     bin: executableName,
     productName: appDirName,
     icon: configs["linux-deb"][myArgs[0]]["iconPath"],
-    arch: "amd64",
+    arch: "x86_64",
     requires: ["libdrm"],
     homepage: "https://threema.ch",
     description: "Desktop client for Threema (requires the mobile app)",
