@@ -38,6 +38,8 @@ if (!hasSingleInstanceLock) {
   });
 }
 
+checkShouldQuitAfterInstallation();
+
 if (process.platform === "win32") {
   log.error("disableHardwareAcceleration");
   electron.app.disableHardwareAcceleration();
@@ -564,6 +566,24 @@ async function checkValidity(): Promise<void> {
   if (!appIsValid(pack.appAge)) {
     const locale = new I18n(electron.app.getLocale());
     await showOutdatedDialog(electron.app, electron.dialog, locale);
+  }
+}
+
+function checkShouldQuitAfterInstallation(): void {
+  let quitAfterInstallation = false;
+  let squirrelFirstLaunch = false;
+  for (const arg of process.argv) {
+    if (arg === "--quit-after-installation") {
+      quitAfterInstallation = true;
+    }
+    if (arg === "--squirrel-firstrun") {
+      squirrelFirstLaunch = true;
+    }
+  }
+
+  if (quitAfterInstallation && squirrelFirstLaunch) {
+    log.info("Should quit after installation.");
+    electron.app.quit();
   }
 }
 
