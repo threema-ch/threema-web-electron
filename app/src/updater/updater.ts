@@ -209,7 +209,7 @@ export class Updater {
     const dialogOpts = {
       type: "info",
       buttons: [locale.localized("restart"), locale.localized("later")],
-      title: locale.localized("updateDialogTitle"),
+      title: `${locale.localized("updateDialogTitle")} ${pack.executableName}`,
       message: locale.localized("updateDialogDetail"),
       detail: releaseNotes ?? locale.localized("noReleaseNotesAvailable"),
     };

@@ -5,7 +5,7 @@
   "okButton": "OK",
   "restart": "Restart",
   "later": "Manually Restart Later",
-  "updateDialogTitle": "Update Available",
+  "updateDialogTitle": "Update Available for",
   "noReleaseNotesAvailable": "This update contains general improvements and minor bug fixes.",
   "updateDialogDetail": "A new app version is available.",
   "about": "About",
