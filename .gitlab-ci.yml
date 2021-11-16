@@ -34,7 +34,7 @@ audit:
   stage: lint
   <<: *global_cache
   script:
-    - npm ci --cache .npm  && npm run app:ci
+    - npm ci --cache .npm && npm run app:ci
     - npm audit --audit-level=high
     - cd app
     - npm audit --audit-level=high
