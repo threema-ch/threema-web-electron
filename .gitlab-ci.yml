@@ -49,7 +49,7 @@ test:
     - npm run test
     - npm run test:junit
   artifacts:
-    expire_in: 48 hours
+    expire_in: 36 hours
     when: always
     reports:
       cobertura: coverage/cobertura-coverage.xml
@@ -68,7 +68,7 @@ prebuild-web:
     - npm run app:build:web
     - ./tools/patches/post-patch-threema-web.sh
   artifacts:
-    expire_in: 48 hours
+    expire_in: 36 hours
     name: prebuilt-threema-web
     paths:
       - app/dependencies/threema-web/
@@ -83,6 +83,8 @@ build-linux:
     - apt-get install -y rpm
     - export threema_web_version=threema-web-2.3.17
     - if [ "$CI_COMMIT_REF_PROTECTED" != "true" ]; then export DEV_ENV=development; fi
+    - rm -rf app/build/dist-electron/packaged
+    - rm -rf app/build/dist-electron/installers
   script:
     - npm ci --cache .npm
     - npm run app:ci
@@ -96,7 +98,7 @@ build-linux:
         FLAVOUR: [consumer, work, red]
   needs: [prebuild-web]
   artifacts:
-    expire_in: 48 hours
+    expire_in: 36 hours
     name: linux-installer
     paths:
       - app/build/dist-electron/installers/*.amd64.rpm
@@ -136,7 +138,7 @@ build-windows:
   timeout: 45m
   needs: [prebuild-web]
   artifacts:
-    expire_in: 48 hours
+    expire_in: 36 hours
     name: windows-installer
     paths:
       - app/build/dist-electron/installers/*-setup.exe
@@ -152,6 +154,8 @@ build-macOS:
   before_script:
     - if [ "$CI_COMMIT_REF_PROTECTED" != "true" ]; then export DEV_ENV=development; fi
     - export threema_web_version=threema-web-2.3.17
+    - rm -rf app/build/dist-electron/packaged
+    - rm -rf app/build/dist-electron/installers
   script:
     - npm ci --cache .npm
     - npm run app:ci
@@ -167,7 +171,7 @@ build-macOS:
       - FLAVOUR: [consumer, work, red]
   needs: [prebuild-web]
   artifacts:
-    expire_in: 48 hours
+    expire_in: 36 hours
     name: macos-installer
     paths:
       - app/build/dist-electron/installers/*.dmg
@@ -185,7 +189,7 @@ generate-updates:
     - npm run generateUpdates:macos
     - npm run generateUpdates:windows
   artifacts:
-    expire_in: 96 hours
+    expire_in: 60 hours
     name: updates
     paths:
       - app/build/dist-electron/updates/*
@@ -214,7 +218,7 @@ generate-download:
     matrix:
       - os: [macos, windows, linux-deb, linux-rpm]
   artifacts:
-    expire_in: 96 hours
+    expire_in: 60 hours
     name: downloads
     paths:
       - app/build/dist-electron/downloads/*
