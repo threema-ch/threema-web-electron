@@ -82,6 +82,7 @@
     "generateDownloads:linux-rpm": "npm run generateUpdates downloads linux-rpm consumer && npm run generateUpdates downloads linux-rpm work && npm run generateUpdates downloads linux-rpm red"
   },
   "devDependencies": {
+    "@electron/universal": "^1.1.0",
     "@threema/wasm-minisign-verify": "^0.1.3",
     "@types/chai": "^4.2.22",
     "@types/mocha": "^9.0.0",

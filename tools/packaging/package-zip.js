@@ -18,7 +18,7 @@ function main() {
   console.log(`Creating package for ${appDirName} (this may take a while)`);
 
   const options = {
-    dir: `app/build/dist-electron/packaged/${appDirName}-darwin-x64`,
+    dir: `app/build/dist-electron/packaged/${appDirName}-darwin-universal`,
     out: `app/build/dist-electron/installers/${outDirName}`,
     relativeOut: `../../installers/${outDirName}`,
     appName: `${appDirName}.app`,

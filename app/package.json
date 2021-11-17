@@ -92,6 +92,10 @@
           "bundleID": "ch.threema-web",
           "executableName": "threema-consumer-web",
           "platform": "darwin",
+          "arch": [
+            "arm64",
+            "x64"
+          ],
           "iconPath": "app/assets/icons/mac/icon.icns",
           "zipName": "Threema",
           "nodeModulesPath": "/Threema.app/Contents/Resources/app/node_modules"
@@ -102,6 +106,10 @@
           "executableName": "threema-work-web",
           "bundleID": "ch.threema-work-web",
           "platform": "darwin",
+          "arch": [
+            "arm64",
+            "x64"
+          ],
           "iconPath": "app/assets/icons/mac/work-icon.icns",
           "zipName": "Threema-Work",
           "nodeModulesPath": "/Threema.app/Contents/Resources/app/node_modules"
@@ -112,6 +120,10 @@
           "executableName": "threema-red-web",
           "bundleID": "ch.threema-red-web",
           "platform": "darwin",
+          "arch": [
+            "arm64",
+            "x64"
+          ],
           "iconPath": "app/assets/icons/mac/red-icon.icns",
           "zipName": "Threema-Red",
           "nodeModulesPath": "/Threema.app/Contents/Resources/app/node_modules"
@@ -123,6 +135,9 @@
           "name": "Threema",
           "executableName": "threema-web",
           "platform": "win32",
+          "arch": [
+            "x64"
+          ],
           "iconPath": "app/assets/icons/win32/consumer.ico",
           "animation": "app/assets/animations/installer_animation_threema_consumer_@600px.gif",
           "nodeModulesPath": "/resources/app/node_modules"
@@ -132,6 +147,9 @@
           "name": "Threema Work",
           "executableName": "threema-work-web",
           "platform": "win32",
+          "arch": [
+            "x64"
+          ],
           "iconPath": "app/assets/icons/win32/work.ico",
           "animation": "app/assets/animations/installer_animation_threema_work_@600px.gif",
           "nodeModulesPath": "/resources/app/node_modules"
@@ -141,6 +159,9 @@
           "name": "Threema Red",
           "executableName": "threema-red-web",
           "platform": "win32",
+          "arch": [
+            "x64"
+          ],
           "iconPath": "app/assets/icons/win32/red.ico",
           "animation": "app/assets/animations/installer_animation_threema_red_@600px.gif",
           "nodeModulesPath": "/resources/app/node_modules"
@@ -152,6 +173,9 @@
           "name": "Threema",
           "executableName": "threema-web",
           "platform": "linux",
+          "arch": [
+            "x64"
+          ],
           "iconPath": "app/assets/icons/png/consumer-128x128.png",
           "nodeModulesPath": "/resources/app/node_modules"
         },
@@ -160,6 +184,9 @@
           "name": "Threema Work",
           "executableName": "threema-work-web",
           "platform": "linux",
+          "arch": [
+            "x64"
+          ],
           "iconPath": "app/assets/icons/png/work-128x128.png",
           "nodeModulesPath": "/resources/app/node_modules"
         },
@@ -168,6 +195,9 @@
           "name": "Threema Red",
           "executableName": "threema-red-web",
           "platform": "linux",
+          "arch": [
+            "x64"
+          ],
           "iconPath": "app/assets/icons/png/red-128x128.png",
           "nodeModulesPath": "/resources/app/node_modules"
         }

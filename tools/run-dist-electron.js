@@ -7,6 +7,7 @@ const {notarize} = require("electron-notarize");
 const path = require("path");
 const {SemVer} = require("semver");
 const common = require("./packaging/common");
+const makeUniversalApp = require("@electron/universal");
 
 const DEV_ENV = process.env.DEV_ENV;
 
@@ -82,7 +83,7 @@ async function package(config, os, flavour) {
 
   // Package
   // This will return true if the directory already exists.
-  const [outputPath] = await packager({
+  const outputPaths = await packager({
     name: packageName,
     // The exectable name does not apply to macOS. For macOS the name is used.
     executableName,
@@ -92,6 +93,7 @@ async function package(config, os, flavour) {
     prune: true,
     overwrite: true,
     asar: true,
+    arch: osConfig["arch"],
     platform: osConfig["platform"],
     icon: osConfig["iconPath"],
     ignore: (path_) => {
@@ -133,15 +135,36 @@ async function package(config, os, flavour) {
     },
   });
 
-  if (osConfig["platform"] === "darwin" && !(DEV_ENV === "development")) {
-    await macOSSign(outputPath, osConfig);
+  if (osConfig["platform"] === "darwin") {
+    const universalOutputPath = `${resolve(
+      __dirname,
+      "..",
+      "app",
+      "build",
+      "dist-electron",
+      "packaged",
+      `${packageName}-darwin-universal`,
+    )}`;
+
+    await makeUniversalApp.makeUniversalApp({
+      x64AppPath: `${outputPaths[0]}/${packageName}.app`,
+      arm64AppPath: `${outputPaths[1]}/${packageName}.app`,
+      outAppPath: `${universalOutputPath}/${packageName}.app`,
+      force: true,
+    });
+
+    outputPaths.push(universalOutputPath);
+
+    if (!(DEV_ENV === "development")) {
+      for (const outputPath of outputPaths) {
+        await macOSSign(outputPath, osConfig);
+
+        await macOSNotarize(executableName, outputPath, osConfig);
+      }
+    }
   }
 
-  if (osConfig["platform"] === "darwin" && !(DEV_ENV === "development")) {
-    await macOSNotarize(executableName, outputPath, osConfig);
-  }
-
-  console.info(`Packaged: ${outputPath}`);
+  console.info(`Packaged: ${outputPaths}`);
 }
 
 async function macOSNotarize(executableName, outputPath, osConfig) {
