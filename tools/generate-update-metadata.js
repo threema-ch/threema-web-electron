@@ -179,7 +179,7 @@ function getLinuxRPMFilename(flavour, channel, version) {
   ].replaceAll(" ", "-");
   console.log(`appDirName ${appDirName}`);
   const versionString = getLinuxRPMVersionString(version, channel);
-  const name = `${appDirName}${getRPMChannel()}${versionString}-1.amd64.rpm`;
+  const name = `${appDirName}${getRPMChannel()}${versionString}-1.x86_64.rpm`;
   console.log("name");
   return name;
 }

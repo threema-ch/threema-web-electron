@@ -101,7 +101,7 @@ build-linux:
     expire_in: 36 hours
     name: linux-installer
     paths:
-      - app/build/dist-electron/installers/*.amd64.rpm
+      - app/build/dist-electron/installers/*.rpm
       - app/build/dist-electron/installers/*.deb
 
 build-windows:
