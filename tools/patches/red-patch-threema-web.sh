@@ -11,6 +11,7 @@ cd "app/dependencies/threema-web/release/$threema_web_version/"
 
 export SALTYRTC_HOST=saltyrtc-staging.threema.c
 export PUSH_URL=https://push-web-staging.threema.ch/push
+export RED_DEBUG=true
 
 if [[ ! -f userconfig.js ]]; then
     echo "Error: Userconfig not found"
@@ -21,9 +22,14 @@ if [ ! -z "${SALTYRTC_HOST:-}" ]; then
     echo "window.UserConfig.SALTYRTC_HOST = '${SALTYRTC_HOST}';" >> userconfig.js
 fi
 if [ ! -z "${PUSH_URL:-}" ]; then
-    echo "window.UserConfig.PUSH_URL = ${PUSH_URL};" >> userconfig.js
+    echo "window.UserConfig.PUSH_URL = '${PUSH_URL}';" >> userconfig.js
+fi
+if [ ! -z "${RED_DEBUG:-}" ]; then
+    echo "window.UserConfig.ARP_LOG_TRACE = '${RED_DEBUG}';" >> userconfig.js
+    echo "window.UserConfig.CONSOLE_LOG_LEVEL = 'debug';" >> userconfig.js
 fi
 
+# TODO: Remove this once CONSOLE_LOG_LEVEL is respected in Threema Web
 sed -i.bak -E "s/CONSOLE_LOG_LEVEL:[^,]*,/CONSOLE_LOG_LEVEL:\"debug\",/g" *.bundle.js
 
 cd ../../../../..
