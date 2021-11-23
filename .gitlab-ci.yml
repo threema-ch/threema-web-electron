@@ -29,6 +29,8 @@ lint:
           - tsc
           - eslint
           - prettier
+  except:
+    - schedules
 
 audit:
   stage: lint
@@ -54,6 +56,8 @@ test:
     reports:
       cobertura: coverage/cobertura-coverage.xml
       junit: test-results.xml
+  except:
+    - schedules
 
 prebuild-web:
   stage: prebuild
@@ -72,6 +76,8 @@ prebuild-web:
     name: prebuilt-threema-web
     paths:
       - app/dependencies/threema-web/
+  except:
+    - schedules
 
 build-linux:
   image: $CI_REGISTRY/operations/dockerfiles/node-buster-wine-mono:16
@@ -103,6 +109,8 @@ build-linux:
     paths:
       - app/build/dist-electron/installers/*.rpm
       - app/build/dist-electron/installers/*.deb
+  except:
+    - schedules
 
 build-windows:
   image: $CI_REGISTRY/operations/dockerfiles/node-buster-wine-mono:16
@@ -144,6 +152,8 @@ build-windows:
       - app/build/dist-electron/installers/*-setup.exe
       - app/build/dist-electron/installers/*-full.nupkg
       - app/build/dist-electron/installers/RELEASES
+  except:
+    - schedules
 
 build-macOS:
   stage: build
@@ -176,6 +186,8 @@ build-macOS:
     paths:
       - app/build/dist-electron/installers/*.dmg
       - app/build/dist-electron/installers/*.zip
+  except:
+    - schedules
 
 generate-updates:
   stage: pre-deploy
@@ -199,6 +211,8 @@ generate-updates:
     variables:
       - "$CI_COMMIT_TAG =~ /release-.*/"
       - '$CI_COMMIT_BRANCH == "main"'
+  except:
+    - schedules
 
 generate-download:
   stage: pre-deploy
@@ -228,6 +242,8 @@ generate-download:
     variables:
       - "$CI_COMMIT_TAG =~ /release-.*/"
       - '$CI_COMMIT_BRANCH == "main"'
+  except:
+    - schedules
 
 deploy-release:
   stage: deploy
@@ -247,6 +263,8 @@ deploy-release:
   variables:
     FTP_PATH: /v1/release/
     # Set FTP_HOST, FTP_USER and FTP_PASS secret variable!
+  except:
+    - schedules
 
 deploy-updates:
   stage: deploy
@@ -266,3 +284,5 @@ deploy-updates:
   variables:
     FTP_PATH: /v1/updates/
     # Set FTP_HOST, FTP_USER and FTP_PASS secret variable!
+  except:
+    - schedules
