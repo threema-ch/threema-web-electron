@@ -29,7 +29,4 @@ if [ ! -z "${RED_DEBUG:-}" ]; then
     echo "window.UserConfig.CONSOLE_LOG_LEVEL = 'debug';" >> userconfig.js
 fi
 
-# TODO: Remove this once CONSOLE_LOG_LEVEL is respected in Threema Web
-sed -i.bak -E "s/CONSOLE_LOG_LEVEL:[^,]*,/CONSOLE_LOG_LEVEL:\"debug\",/g" *.bundle.js
-
 cd ../../../../..
