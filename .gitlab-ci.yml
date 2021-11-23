@@ -65,7 +65,7 @@ prebuild-web:
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
   script:
-    - export threema_web_version=threema-web-2.3.17
+    - export threema_web_version=threema-web-2.3.18
     - npm ci --cache .npm
     - ./tools/patches/patch-threema-web.sh
     - node tools/patches/pre-patch-threema-web.js
@@ -87,7 +87,7 @@ build-linux:
     - apt-get update -y
     - apt-get install -y fakeroot
     - apt-get install -y rpm
-    - export threema_web_version=threema-web-2.3.17
+    - export threema_web_version=threema-web-2.3.18
     - if [ "$CI_COMMIT_REF_PROTECTED" != "true" ]; then export DEV_ENV=development; fi
     - rm -rf app/build/dist-electron/packaged
     - rm -rf app/build/dist-electron/installers
@@ -125,7 +125,7 @@ build-windows:
     - rm -rf app/build/dist-electron/packaged
     - rm -rf app/build/dist-electron/installers
     - mono --version
-    - export threema_web_version=threema-web-2.3.17
+    - export threema_web_version=threema-web-2.3.18
     - if [ "$CI_COMMIT_REF_PROTECTED" != "true" ]; then export DEV_ENV=development; fi
   script:
     - pwd
@@ -163,7 +163,7 @@ build-macOS:
     - no-parallel
   before_script:
     - if [ "$CI_COMMIT_REF_PROTECTED" != "true" ]; then export DEV_ENV=development; fi
-    - export threema_web_version=threema-web-2.3.17
+    - export threema_web_version=threema-web-2.3.18
     - rm -rf app/build/dist-electron/packaged
     - rm -rf app/build/dist-electron/installers
   script:
