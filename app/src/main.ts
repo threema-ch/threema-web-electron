@@ -137,7 +137,7 @@ async function start(session: electron.Session): Promise<void> {
   window = new electron.BrowserWindow({
     width: windowWidth + 1,
     height: 800,
-    title: pack.name,
+    title: pack.executableName,
     icon: getIconLocation(),
     webPreferences: {
       // Order from https://www.electronjs.org/docs/latest/api/browser-window/
@@ -241,7 +241,7 @@ async function start(session: electron.Session): Promise<void> {
   // setting reloadIgnoringCache solves the issue with the app sometimes not being able to
   // correctly load the website.
   await window.loadURL(url);
-  window.setTitle(pack.name);
+  window.setTitle(pack.executableName);
 
   await setMinimalAsDefault();
 
