@@ -128,7 +128,8 @@ async function start(session: electron.Session): Promise<void> {
   window = new electron.BrowserWindow({
     width: windowWidth + 1,
     height: 800,
-    title: pack.executableName,
+    title: pack.name,
+    icon: getIconLocation(),
     webPreferences: {
       // Order from https://www.electronjs.org/docs/latest/api/browser-window/
       nodeIntegration: false,
@@ -231,7 +232,7 @@ async function start(session: electron.Session): Promise<void> {
   // setting reloadIgnoringCache solves the issue with the app sometimes not being able to
   // correctly load the website.
   await window.loadURL(url);
-  window.setTitle(pack.executableName);
+  window.setTitle(pack.name);
 
   await setMinimalAsDefault();
 
@@ -455,14 +456,32 @@ function maybeParseUrl(url: string): undefined | URL {
 
 function getIconLocation(): string {
   const flavour = pack.flavour;
-
-  return path.join(
-    electron.app.getAppPath(),
-    "assets",
-    `icons`,
-    `png`,
-    `${flavour}-512x512.png`,
-  );
+  const appPath = electron.app.getAppPath();
+  switch (process.platform) {
+    case "win32":
+      return path.join(appPath, "assets", "icons", "win32", `${flavour}.ico`);
+    case "darwin":
+      if (flavour === "consumer") {
+        return path.join(appPath, "assets", "icons", "mac", "icons.icns");
+      } else {
+        return path.join(
+          appPath,
+          "assets",
+          "icons",
+          "mac",
+          `${flavour}-icons.icns`,
+        );
+      }
+    case "linux":
+    default:
+      return path.join(
+        appPath,
+        "assets",
+        "icons",
+        "png",
+        `${flavour}-512x512.png`,
+      );
+  }
 }
 
 function handlePowerMonitor(powerMonitor: electron.PowerMonitor): void {

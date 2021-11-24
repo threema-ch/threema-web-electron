@@ -17,12 +17,16 @@ async function main() {
   console.log(`Creating package for ${appDirName} (this may take a while)`);
 
   const options = {
+    desktopTemplate: "app/assets/desktop.ejs",
     src: `app/build/dist-electron/packaged/${appDirName}-linux-x64/`,
     dest: "app/build/dist-electron/installers",
     name: appDirName,
     bin: executableName,
     productName: appDirName,
-    icon: configs["linux-deb"][myArgs[0]]["iconPath"],
+    startupWmClass: executableName,
+    genericName: "Threema Desktop Client",
+    maintainer: "Threema GmbH <help@threema.ch>",
+    icon: configs["linux-deb"][myArgs[0]]["icons"],
     arch: "amd64",
     homepage: "https://threema.ch",
     categories: ["Social Media"],
