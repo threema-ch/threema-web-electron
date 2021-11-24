@@ -176,7 +176,12 @@
           "arch": [
             "x64"
           ],
-          "iconPath": "app/assets/icons/png/consumer-128x128.png",
+          "icons": {
+            "128x128": "app/assets/icons/png/consumer-128x128.png",
+            "256x256": "app/assets/icons/png/consumer-256x256.png",
+            "512x512": "app/assets/icons/png/consumer-512x512.png",
+            "scalable": "app/assets/icons/svg/consumer.svg"
+          },
           "nodeModulesPath": "/resources/app/node_modules"
         },
         "work": {
@@ -187,7 +192,12 @@
           "arch": [
             "x64"
           ],
-          "iconPath": "app/assets/icons/png/work-128x128.png",
+          "icons": {
+            "128x128": "app/assets/icons/png/work-128x128.png",
+            "256x256": "app/assets/icons/png/work-256x256.png",
+            "512x512": "app/assets/icons/png/work-512x512.png",
+            "scalable": "app/assets/icons/svg/work.svg"
+          },
           "nodeModulesPath": "/resources/app/node_modules"
         },
         "red": {
@@ -198,7 +208,11 @@
           "arch": [
             "x64"
           ],
-          "iconPath": "app/assets/icons/png/red-128x128.png",
+          "icons": {
+            "128x128": "app/assets/icons/png/red-128x128.png",
+            "256x256": "app/assets/icons/png/red-256x256.png",
+            "512x512": "app/assets/icons/png/red-512x512.png"
+          },
           "nodeModulesPath": "/resources/app/node_modules"
         }
       }
