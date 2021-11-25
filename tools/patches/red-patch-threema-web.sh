@@ -9,7 +9,7 @@ fi
 
 cd "app/dependencies/threema-web/release/$threema_web_version/"
 
-export SALTYRTC_HOST=saltyrtc-staging.threema.c
+export SALTYRTC_HOST=saltyrtc-staging.threema.ch
 export PUSH_URL=https://push-web-staging.threema.ch/push
 export RED_DEBUG=true
 
