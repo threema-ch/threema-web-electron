@@ -21,12 +21,16 @@ export class Downloader {
 
   public async downloadUpdateInfo(): Promise<string> {
     const downloadPath = this._getNewUpdateInfoDownloadPath();
-    const filePath = fs.createWriteStream(downloadPath);
+    const writeStream = fs.createWriteStream(downloadPath);
+    const fileWrittenPromise = this._waitForFinish(writeStream);
 
     const serverPath = `${this._basePath}/${this._updateInfoPath}`;
 
-    await this._download(serverPath, filePath);
-    filePath.end();
+    await this._download(serverPath, writeStream);
+    writeStream.end();
+
+    await fileWrittenPromise;
+
     const metadata = await fsPromises.readFile(downloadPath, "utf8");
     log.error(`metadata is ${metadata}`);
     return metadata;
@@ -36,19 +40,29 @@ export class Downloader {
     const downloadPath = this._getNewBinaryDownloadPath(
       updateMetadata.updateInfo.version,
     );
-    const filePath = fs.createWriteStream(downloadPath);
+    const writeStream = fs.createWriteStream(downloadPath);
+    const fileWrittenPromise = this._waitForFinish(writeStream);
 
     const serverPath = `${this._basePath}/${updateMetadata.updateInfo.binary.binaryPath}`;
 
     log.info(`Downloading update from ${serverPath} to ${downloadPath}`);
 
-    await this._download(serverPath, filePath);
-    filePath.end();
+    await this._download(serverPath, writeStream);
+
+    writeStream.end();
+
+    await fileWrittenPromise;
 
     return downloadPath;
   }
 
   // Private Methods
+
+  private async _waitForFinish(writeStream: fs.WriteStream): Promise<void> {
+    return await new Promise((resolve) => {
+      writeStream.on("finish", resolve);
+    });
+  }
 
   private async _download(
     downloadPath: string,
