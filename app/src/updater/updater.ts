@@ -359,9 +359,12 @@ export class Updater {
 
     log.log(`Update json is ${updateString}`);
 
-    const filePath = fs.createWriteStream(updateMetadataFilename);
-    filePath.write(updateString);
-    filePath.close();
+    const writeStream = fs.createWriteStream(updateMetadataFilename);
+    const writeStreamPromise = this._waitForFinish(writeStream);
+    writeStream.write(updateString);
+    writeStream.end();
+
+    await writeStreamPromise;
 
     let url = updateFolder;
     if (process.platform === "darwin") {
@@ -369,6 +372,12 @@ export class Updater {
     }
 
     return url;
+  }
+
+  private async _waitForFinish(writeStream: fs.WriteStream): Promise<void> {
+    return await new Promise((resolve) => {
+      writeStream.on("finish", resolve);
+    });
   }
 
   private _updateAlreadyQueued(updateInfoJson: UpdateInfo): boolean {
