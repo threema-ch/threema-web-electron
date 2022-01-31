@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <metadata_license>CC0-1.0</metadata_license>
+  <id>ch.threema.threema-web-desktop</id>
+  <name>Threema</name>
+  <project_license>AGPL-3.0</project_license>
+  <summary>Threema for desktop is a desktop client for Threema, a  privacy-focused end-to-end encrypted mobile messenger hosted and developed 
+  in Switzerland.</summary>
+  <url type="homepage">https://threema.ch/</url>
+  <url type="help">https://threema.ch/support</url>
+  <url type="contact">https://threema.ch/en/request/default?i_have_read_the_faq=1</url>
+  <description>
+    <p>Threema for desktop is a desktop client for Threema, a privacy-focused end-to-end encrypted mobile messenger hosted and developed in Switzerland. With Threema for desktop, you can use Threema on your desktop without compromising security.</p>
+    <p>Threema for desktop currently requires an active connection to Threema installed on a smartphone. The next major update of the desktop app will not only introduce a completely redesigned user interface, it will also be based on a totally new architecture. Thanks to multi-device functionality, version 2.0 will no longer require an active connection to your mobile device.</p>
+  </description>
+  <screenshots>
+    <screenshot>
+      <caption>The Threema for desktop main window.</caption>
+      <image type="source">https://raw.githubusercontent.com/threema-ch/threema-web-electron/develop/assets/threema-desktop-screenshot1.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>The Threema for desktop main window.</caption>
+      <image type="source">https://raw.githubusercontent.com/threema-ch/threema-web-electron/develop/assets/threema-desktop-screenshot2.png</image>
+    </screenshot>
+  </screenshots>
+  <releases>
+    <release version="1.1.0" date="2021-12-15"/>
+    <release version="1.0.3" date="2021-10-26"/>
+  </releases>
+  <launchable type="desktop-id">ch.threema.threema-web-desktop.desktop</launchable>
+  <content_rating type="oars-1.1">
+    <content_attribute id="social-chat">intense</content_attribute>
+    <content_attribute id="social-audio">intense</content_attribute>
+  </content_rating>
+  <update_contact>help_AT_threema.ch</update_contact>
+</component>
+
