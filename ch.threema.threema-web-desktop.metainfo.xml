@@ -15,11 +15,11 @@
   </description>
   <screenshots>
     <screenshot>
-      <caption>The Threema for desktop main window.</caption>
+      <caption>The Threema for desktop main window</caption>
       <image type="source">https://raw.githubusercontent.com/threema-ch/threema-web-electron/develop/assets/threema-desktop-screenshot1.png</image>
     </screenshot>
     <screenshot>
-      <caption>The Threema for desktop main window.</caption>
+      <caption>The Threema for desktop main window</caption>
       <image type="source">https://raw.githubusercontent.com/threema-ch/threema-web-electron/develop/assets/threema-desktop-screenshot2.png</image>
     </screenshot>
   </screenshots>
