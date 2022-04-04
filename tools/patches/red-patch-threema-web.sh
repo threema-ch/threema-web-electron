@@ -1,4 +1,5 @@
-#!/usr/bin/env bash
+#!/bin/bash
+set -euo pipefail
 
 echo "Patching for Threema Red"
 
@@ -18,13 +19,13 @@ if [[ ! -f userconfig.js ]]; then
     exit 1
 fi
 echo '// Overrides by red-patch-threema-web.sh' >> userconfig.js
-if [ ! -z "${SALTYRTC_HOST:-}" ]; then
+if [ -n "${SALTYRTC_HOST:-}" ]; then
     echo "window.UserConfig.SALTYRTC_HOST = '${SALTYRTC_HOST}';" >> userconfig.js
 fi
-if [ ! -z "${PUSH_URL:-}" ]; then
+if [ -n "${PUSH_URL:-}" ]; then
     echo "window.UserConfig.PUSH_URL = '${PUSH_URL}';" >> userconfig.js
 fi
-if [ ! -z "${RED_DEBUG:-}" ]; then
+if [ -n "${RED_DEBUG:-}" ]; then
     echo "window.UserConfig.ARP_LOG_TRACE = '${RED_DEBUG}';" >> userconfig.js
     echo "window.UserConfig.CONSOLE_LOG_LEVEL = 'debug';" >> userconfig.js
 fi

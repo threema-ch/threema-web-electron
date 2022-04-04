@@ -22,7 +22,16 @@ async function main() {
     name: appDirName,
     bin: executableName,
     productName: appDirName,
-    icon: configs["linux-deb"][myArgs[0]]["iconPath"],
+    icon: {
+      // KDE
+      "48x48": configs["linux-deb"][myArgs[0]]["icons"]["48x48"],
+      "64x64": configs["linux-deb"][myArgs[0]]["icons"]["64x64"],
+      "128x128": configs["linux-deb"][myArgs[0]]["icons"]["128x128"],
+      "256x256": configs["linux-deb"][myArgs[0]]["icons"]["256x256"],
+      "scalable": configs["linux-deb"][myArgs[0]]["icons"]["scalable"],
+      // Ubuntu
+      "symbolic": configs["linux-deb"][myArgs[0]]["icons"]["scalable"],
+    },
     arch: "x86_64",
     requires: ["libdrm"],
     homepage: "https://threema.ch",

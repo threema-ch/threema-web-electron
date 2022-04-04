@@ -9,8 +9,3 @@ contextBridge.exposeInMainWorld("AppDataStore", {
   getValue: (key: string) =>
     ipcRenderer.sendSync("app-data-store:get-value", {key}),
 });
-
-contextBridge.exposeInMainWorld("UnreadCount", {
-  updateValue: (value: number) =>
-    ipcRenderer.send("unread-count:update-value", {value}),
-});

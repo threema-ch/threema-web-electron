@@ -1,5 +1,6 @@
 import {Menu, MenuItem, MenuItemConstructorOptions, shell} from "electron";
 import type {I18n} from "./i18n/i18n";
+import * as log from "electron-log";
 import * as pack from "../package.json";
 
 function getTemplate(locale: I18n): (MenuItemConstructorOptions | MenuItem)[] {
@@ -80,8 +81,10 @@ function getTemplate(locale: I18n): (MenuItemConstructorOptions | MenuItem)[] {
       submenu: [
         {
           label: locale.localized(`supportLinkLabel`),
-          click: async (): Promise<void> => {
-            await shell.openExternal("https://threema.ch/support");
+          click: (): void => {
+            shell
+              .openExternal("https://threema.ch/support")
+              .catch((e) => log.error("Could not open support page.", e));
           },
         },
       ],
