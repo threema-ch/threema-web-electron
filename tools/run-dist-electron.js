@@ -96,6 +96,10 @@ async function package(config, os, flavour) {
     arch: osConfig["arch"],
     platform: osConfig["platform"],
     icon: osConfig["iconPath"],
+    extendInfo: {
+      LSFileQuarantineEnabled: true,
+      LSFileQuarantineExcludedPathPatterns: ["~/Library/*"],
+    },
     ignore: (path_) => {
       // Deny: Default rules from electron-packager
       if (options.ignore.some((rule) => path_.match(rule))) {

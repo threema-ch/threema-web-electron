@@ -348,7 +348,9 @@ async function start(session: electron.Session): Promise<void> {
       return callback({
         responseHeaders: {
           ...details.responseHeaders,
+          /* eslint-disable */
           "Content-Security-Policy": [
+            /* eslint-enable */
             // Fetch directives
             "default-src 'self' 'unsafe-eval' 'unsafe-inline' data:",
           ].join("; "),
@@ -358,7 +360,9 @@ async function start(session: electron.Session): Promise<void> {
     return callback({
       responseHeaders: {
         ...details.responseHeaders,
+        /* eslint-disable */
         "Content-Security-Policy": [
+          /* eslint-enable */
           // Fetch directives
           "default-src 'self'",
           "child-src 'none'",

@@ -6,7 +6,7 @@ const os = myArgs[0];
 const flavour = myArgs[1];
 
 const pack = common.getPackage();
-const threemaWebVersion = `2.3.19`;
+const threemaWebVersion = `2.3.20`;
 let prodName = pack.electron.buildConfigs[os][flavour]["name"];
 
 if (common.hasChannelName()) {
