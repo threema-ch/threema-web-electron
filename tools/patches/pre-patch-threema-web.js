@@ -2,7 +2,7 @@ const common = require("./../packaging/common");
 const execSync = require("child_process").execSync;
 
 const pack = common.getPackage();
-const threemaWebVersion = `2.3.20`;
+const threemaWebVersion = `2.4.1`;
 const versionString = `${threemaWebVersion} (${pack.version})`;
 
 console.log(`Patch Threema Web version number to ${versionString}`);
