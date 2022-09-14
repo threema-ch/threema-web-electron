@@ -1,5 +1,5 @@
 diff --git a/src/helpers/browser_info.ts b/src/helpers/browser_info.ts
-index 8531f64f..43b528fa 100644
+index 8531f64f..560b6ddb 100644
 --- a/src/helpers/browser_info.ts
 +++ b/src/helpers/browser_info.ts
 @@ -68,6 +68,11 @@ export class BrowserInfo {
@@ -15,10 +15,10 @@ index 8531f64f..43b528fa 100644
          if (this.mobile) {
              description += ' [Mobile]';
 diff --git a/src/partials/welcome.ts b/src/partials/welcome.ts
-index 39133142..df4c00d8 100644
+index 03a58b31..72ee154a 100644
 --- a/src/partials/welcome.ts
 +++ b/src/partials/welcome.ts
-@@ -170,6 +170,7 @@ class WelcomeController {
+@@ -174,6 +174,7 @@ class WelcomeController {
                  this.log.warn('Edge is too old (' + version + ' < ' + minVersions.EDGE + ')');
                  this.showBrowserWarning();
              }
@@ -27,7 +27,7 @@ index 39133142..df4c00d8 100644
              this.log.warn('Non-supported browser, please use Chrome, Firefox, Edge or Opera');
              this.showBrowserWarning();
 diff --git a/src/services/browser.ts b/src/services/browser.ts
-index c405e0d4..4b972718 100644
+index c65b1541..419ea3a6 100644
 --- a/src/services/browser.ts
 +++ b/src/services/browser.ts
 @@ -45,11 +45,17 @@ export class BrowserService {
@@ -62,10 +62,10 @@ index c405e0d4..4b972718 100644
                      } else {
                          b = x;
                      }
-@@ -124,6 +136,15 @@ export class BrowserService {
-             if (browser.opera) {
+@@ -125,6 +137,16 @@ export class BrowserService {
                  this.browser = new BrowserInfo(uagent, BrowserName.Opera, version);
              }
+ 
 +            if (browser.win32Desktop) {
 +                this.browser = new BrowserInfo(uagent, BrowserName.win32Desktop, version);
 +            }
@@ -75,14 +75,15 @@ index c405e0d4..4b972718 100644
 +            if (browser.linuxDesktop) {
 +                this.browser = new BrowserInfo(uagent, BrowserName.linuxDesktop, version);
 +            }
-         }
- 
-         return this.browser;
++
+             // Detection failed
+             if (this.browser === undefined) {
+                 this.log.warn(`Browser could not be recognized. User agent: ${uagent}`);
 diff --git a/src/threema.d.ts b/src/threema.d.ts
-index 34599db3..32992a2a 100644
+index eff12916..2a62fbfa 100644
 --- a/src/threema.d.ts
 +++ b/src/threema.d.ts
-@@ -540,6 +540,9 @@ declare namespace threema {
+@@ -539,6 +539,9 @@ declare namespace threema {
          Edge = 'edge',
          Opera = 'opera',
          Safari = 'safari',

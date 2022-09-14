@@ -480,9 +480,7 @@ export class Updater {
     newVersion: string,
   ): boolean {
     const isValid = semver.valid(newVersion) !== null;
-    const isNewer = semver.lt(currentVersion, newVersion, {
-      includePrerelease: true,
-    });
+    const isNewer = semver.lt(currentVersion, newVersion);
 
     return isValid && isNewer;
   }

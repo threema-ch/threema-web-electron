@@ -33,4 +33,28 @@ describe("checkSmallerVersionNumber", () => {
       ).to.equal(false);
     });
   });
+
+  describe("Test Version Compare 5", () => {
+    it("Testing initialization", () => {
+      expect(
+        Updater.checkSmallerVersionNumber("0.0.1-alpha", "0.0.1"),
+      ).to.equal(true);
+    });
+  });
+
+  describe("Test Version Compare 6", () => {
+    it("Testing initialization", () => {
+      expect(
+        Updater.checkSmallerVersionNumber("0.0.1-alpha", "0.0.2"),
+      ).to.equal(true);
+    });
+  });
+
+  describe("Test Version Compare 7", () => {
+    it("Testing initialization", () => {
+      expect(
+        Updater.checkSmallerVersionNumber("0.0.1-alpha", "0.0.1-beta"),
+      ).to.equal(true);
+    });
+  });
 });
