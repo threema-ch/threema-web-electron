@@ -15,15 +15,21 @@
   </description>
   <screenshots>
     <screenshot>
-      <caption>The Threema for desktop main window.</caption>
+      <caption>The Threema for desktop main window</caption>
       <image type="source">https://raw.githubusercontent.com/threema-ch/threema-web-electron/develop/assets/threema-desktop-screenshot1.png</image>
     </screenshot>
     <screenshot>
-      <caption>The Threema for desktop main window.</caption>
+      <caption>The Threema for desktop main window</caption>
       <image type="source">https://raw.githubusercontent.com/threema-ch/threema-web-electron/develop/assets/threema-desktop-screenshot2.png</image>
     </screenshot>
   </screenshots>
   <releases>
+    <release version="1.2.21" date="2022-09-14"/>
+    <release version="1.2.18" date="2022-07-21"/>
+    <release version="1.2.13" date="2022-06-07"/>
+    <release version="1.2.7" date="2022-04-26"/>
+    <release version="1.2.5" date="2022-04-20"/>
+    <release version="1.2.0" date="2022-04-04"/>
     <release version="1.1.0" date="2021-12-15"/>
     <release version="1.0.3" date="2021-10-26"/>
   </releases>
