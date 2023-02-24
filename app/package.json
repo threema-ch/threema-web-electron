@@ -15,7 +15,7 @@
   "keywords": [],
   "author": "Threema GmbH",
   "license": "GNU AGPLv3",
-  "threemaWebVersion": "threema-web-2.5.0",
+  "threemaWebVersion": "threema-web-2.5.1",
   "updateServer": {
     "hostname": "releases.threema.ch",
     "path": "/web-electron/v1/updates"
@@ -41,7 +41,7 @@
         "/": "^(package.json)$",
         "/dist/": ".*",
         "/assets/icons/png": ".*",
-        "/dependencies/threema-web/release/threema-web-2.5.0/": ".*",
+        "/dependencies/threema-web/release/threema-web-2.5.1/": ".*",
         "/node_modules/electron-is-dev/": "^(index.js|package.json)$",
         "/node_modules/semver/": ".*",
         "/node_modules/electron-context-menu/": ".*",
