@@ -8,6 +8,7 @@ const path = require("path");
 const {SemVer} = require("semver");
 const common = require("./packaging/common");
 const makeUniversalApp = require("@electron/universal");
+const OSXSign = require("@electron/osx-sign");
 
 const DEV_ENV = process.env.DEV_ENV;
 
@@ -188,9 +189,8 @@ async function macOSNotarize(executableName, outputPath, osConfig) {
 
 async function macOSSign(outputPath, osConfig) {
   console.log("Start signing");
-  const signAsync = require("electron-osx-sign").signAsync;
 
-  await signAsync({
+  await OSXSign.signAsync({
     "app": path.join(`${outputPath}`, `${packageName}.app`),
     "identity": "Developer ID Application: Threema GmbH (DL5SR3PBJC)",
     "entitlements": "app/src/entitlements.plist",

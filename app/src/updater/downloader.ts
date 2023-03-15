@@ -76,7 +76,6 @@ export class Downloader {
       agent: new https.Agent({
         maxCachedSessions: 0,
       }),
-      // @ts-expect-error: TODO https://github.com/DefinitelyTyped/DefinitelyTyped/discussions/55949tls
       checkServerIdentity: this._checkServerIdentity.bind(this),
     };
 

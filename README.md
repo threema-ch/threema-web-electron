@@ -39,7 +39,7 @@ To build Threema for desktop, follow the steps below.
 **Step 1: Build Threema Web**
 
     export DEV_ENV=development
-    export threema_web_version=threema-web-2.5.0
+    export threema_web_version=threema-web-2.5.1
     npm install
     ./tools/patches/patch-threema-web.sh
     npm run app:build:web
