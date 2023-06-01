@@ -38,7 +38,7 @@ export function appIsValid(appAge: number): boolean {
 }
 
 function getDialogOpts(locale: I18n): MessageBoxOptions {
-  const dialogOpts = {
+  const dialogOpts: MessageBoxOptions = {
     type: "info",
     buttons: [
       locale.localized("ignoreOutdatedButton"),

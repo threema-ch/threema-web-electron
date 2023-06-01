@@ -122,7 +122,7 @@ export class Updater {
   private _showUpdateErrorDialog(dialog: Dialog, locale: I18n): void {
     if (!this._updateErrorShown) {
       this._updateErrorShown = true;
-      const dialogOpts = {
+      const dialogOpts: MessageBoxOptions = {
         type: "error",
         buttons: [locale.localized("okButton")],
         title: locale.localized("updateAvaiableDialogeTitle"),
@@ -210,7 +210,7 @@ export class Updater {
     releaseNotes: string | undefined,
     locale: I18n,
   ): MessageBoxOptions {
-    const dialogOpts = {
+    const dialogOpts: MessageBoxOptions = {
       type: "info",
       buttons: [locale.localized("restart"), locale.localized("later")],
       title: `${locale.localized("updateDialogTitle")} ${pack.executableName}`,
