@@ -84,11 +84,13 @@ export class Updater {
         this._autoUpdater.on(
           "update-downloaded",
           (
-            event: Event,
-            releaseNotes: string,
-            releaseName: string,
-            releaseDate: Date,
-            updateUrl: string,
+            /* eslint-disable @typescript-eslint/naming-convention */
+            _event,
+            releaseNotes,
+            _releaseName,
+            _releaseDate,
+            updateUrl,
+            /* eslint-enable @typescript-eslint/naming-convention */
           ) => {
             const nonEmptyReleaseNotes =
               releaseNotes === "" ? releaseNotes : undefined;

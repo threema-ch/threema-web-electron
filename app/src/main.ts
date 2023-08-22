@@ -9,6 +9,8 @@ import {I18n} from "./i18n/i18n";
 import {getMenu} from "./menu";
 import contextMenu from "electron-context-menu";
 import {showOutdatedDialog, appIsValid} from "./appAgeValidityChecker";
+import {isRecordWhere} from "./util/record";
+import {isString} from "./util/string";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 const SECOND = 1000;
@@ -72,11 +74,32 @@ electron.app.on("will-quit", () => {
 // that survives a page reload.
 const appDataStore: Record<string, unknown> = {};
 electron.ipcMain.on("app-data-store:set-value", (event, arg) => {
-  appDataStore[arg.key.toString()] = arg.value;
+  if (
+    isRecordWhere(
+      {
+        key: (key): key is "key" | "value" => key === "key" || key === "value",
+        value: (value): value is unknown => true,
+      },
+      arg,
+    )
+  ) {
+    appDataStore[String(arg.key)] = arg.value;
+  }
+
   event.returnValue = undefined;
 });
 electron.ipcMain.on("app-data-store:get-value", (event, arg) => {
-  event.returnValue = appDataStore[arg.key.toString()];
+  if (
+    isRecordWhere(
+      {
+        key: (key): key is "key" => key === "key",
+        value: isString,
+      },
+      arg,
+    )
+  ) {
+    event.returnValue = appDataStore[arg.key.toString()];
+  }
 });
 
 // Check for, download and prompt to install updates.
@@ -154,14 +177,15 @@ async function start(session: electron.Session): Promise<void> {
   window.webContents.on(
     "did-fail-load",
     (
-      event: Event,
-      errorCode: number,
-      errorDescription: string,
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      validatedURL: string,
-      isMainFrame: boolean,
-      frameProcessId: number,
-      frameRoutingId: number,
+      /* eslint-disable @typescript-eslint/naming-convention */
+      _event,
+      errorCode,
+      _errorDescription,
+      validatedURL,
+      isMainFrame,
+      frameProcessId,
+      frameRoutingId,
+      /* eslint-enable @typescript-eslint/naming-convention */
     ) => {
       log.error(
         `An error ocurred while loading webConents with: errorCode ${errorCode}, validatedURL ${validatedURL}, isMainFrame ${isMainFrame}, frameProcessId ${frameProcessId}, frameRoutingId ${frameRoutingId}`,
@@ -228,13 +252,7 @@ async function start(session: electron.Session): Promise<void> {
   log.debug(`Running in mode: ${process.env.NODE_ENV}`);
   log.info(`Serving app from ${url}`);
 
-  // According to https://github.com/electron/electron/issues/28208#issue-832312268
-  // setting reloadIgnoringCache solves the issue with the app sometimes not being able to
-  // correctly load the website.
-  await window.loadURL(url);
   window.setTitle(pack.executableName);
-
-  await setMinimalAsDefault();
 
   setupMenu(new I18n(electron.app.getLocale()));
 
@@ -392,6 +410,12 @@ async function start(session: electron.Session): Promise<void> {
     });
   });
 
+  // According to https://github.com/electron/electron/issues/28208#issue-832312268
+  // setting reloadIgnoringCache solves the issue with the app sometimes not being able to
+  // correctly load the website.
+  await window.loadURL(url);
+  await setMinimalAsDefault();
+
   await checkValidity();
 }
 
@@ -500,10 +524,12 @@ function handlePowerMonitor(powerMonitor: electron.PowerMonitor): void {
 
 async function setMinimalAsDefault(): Promise<void> {
   if (window !== undefined) {
-    const settingsUserInterface = await window.webContents.executeJavaScript(
-      'localStorage.getItem("settings-userInterface")',
-      false,
-    );
+    const settingsUserInterface: unknown =
+      await window.webContents.executeJavaScript(
+        'localStorage.getItem("settings-userInterface")',
+        false,
+      );
+
     if (settingsUserInterface === null) {
       await window.webContents.executeJavaScript(
         'localStorage.setItem("settings-userInterface", "minimal")',

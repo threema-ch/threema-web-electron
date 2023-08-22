@@ -1,11 +1,7 @@
 module.exports = {
   plugins: ["@typescript-eslint"],
 
-  extends: [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
-    "prettier",
-  ],
+  extends: ["eslint:recommended", "prettier"],
 
   parser: "@typescript-eslint/parser",
   parserOptions: {
@@ -144,83 +140,6 @@ module.exports = {
     "prefer-spread": "error",
     "prefer-template": "error",
     "symbol-description": "error",
-
-    // TypeScript features also applicable to JavaScript files
-    "@typescript-eslint/array-type": [
-      "error",
-      {
-        "array-simple": true,
-      },
-    ],
-    "@typescript-eslint/ban-ts-comment": [
-      "error",
-      {
-        "ts-expect-error": "allow-with-description",
-      },
-    ],
-    "@typescript-eslint/ban-types": [
-      "error",
-      {
-        extendDefaults: true,
-        types: {
-          null: {
-            message: "Use undefined instead",
-            fixWith: "undefined",
-          },
-        },
-      },
-    ],
-    "@typescript-eslint/class-literal-property-style": "error",
-    "@typescript-eslint/consistent-type-assertions": [
-      "error",
-      {
-        assertionStyle: "as",
-        // Note: Needed due to heavy usage of new-types
-        objectLiteralTypeAssertions: "allow",
-      },
-    ],
-    "@typescript-eslint/consistent-type-definitions": ["error", "interface"],
-    "@typescript-eslint/method-signature-style": "error",
-    "@typescript-eslint/no-confusing-non-null-assertion": "error",
-    "@typescript-eslint/no-dynamic-delete": "error",
-    "@typescript-eslint/no-explicit-any": "error",
-    "@typescript-eslint/no-extraneous-class": "error",
-    "@typescript-eslint/no-invalid-void-type": "error",
-    "@typescript-eslint/no-parameter-properties": [
-      "error",
-      {
-        allows: [
-          "private",
-          "protected",
-          "public",
-          "private readonly",
-          "protected readonly",
-          "public readonly",
-        ],
-      },
-    ],
-    "@typescript-eslint/no-require-imports": "error",
-    "@typescript-eslint/prefer-for-of": "error",
-    "@typescript-eslint/prefer-literal-enum-member": "error",
-    "@typescript-eslint/prefer-optional-chain": "error",
-    "@typescript-eslint/prefer-ts-expect-error": "error",
-    "@typescript-eslint/unified-signatures": "error",
-
-    // TypeScript eslint extensions
-    "@typescript-eslint/default-param-last": "error",
-    "@typescript-eslint/no-dupe-class-members": "error",
-    "@typescript-eslint/no-duplicate-imports": "error",
-    "@typescript-eslint/no-invalid-this": "error",
-    "@typescript-eslint/no-loss-of-precision": "error",
-    "@typescript-eslint/no-shadow": "error",
-    "@typescript-eslint/no-unused-expressions": "error",
-    "@typescript-eslint/no-unused-vars": [
-      "error",
-      {
-        args: "none",
-      },
-    ],
-    "@typescript-eslint/no-useless-constructor": "error",
   },
 
   overrides: [
@@ -242,6 +161,10 @@ module.exports = {
     // General TypeScript rules
     {
       files: "*.ts",
+      extends: [
+        "plugin:@typescript-eslint/recommended-type-checked",
+        "plugin:@typescript-eslint/stylistic-type-checked",
+      ],
       env: {
         node: true,
       },
@@ -350,6 +273,73 @@ module.exports = {
         ],
         "@typescript-eslint/require-await": "error",
         "@typescript-eslint/return-await": ["error", "always"],
+
+        // TypeScript features also applicable to JavaScript files
+        "@typescript-eslint/array-type": [
+          "error",
+          {
+            default: "array-simple",
+          },
+        ],
+        "@typescript-eslint/ban-ts-comment": [
+          "error",
+          {
+            "ts-expect-error": "allow-with-description",
+          },
+        ],
+        "@typescript-eslint/ban-types": [
+          "error",
+          {
+            extendDefaults: true,
+            types: {
+              null: {
+                message: "Use undefined instead",
+                fixWith: "undefined",
+              },
+            },
+          },
+        ],
+        "@typescript-eslint/class-literal-property-style": "error",
+        "@typescript-eslint/consistent-type-assertions": [
+          "error",
+          {
+            assertionStyle: "as",
+            // Note: Needed due to heavy usage of new-types
+            objectLiteralTypeAssertions: "allow",
+          },
+        ],
+        "@typescript-eslint/consistent-type-definitions": [
+          "error",
+          "interface",
+        ],
+        "@typescript-eslint/method-signature-style": "error",
+        "@typescript-eslint/no-confusing-non-null-assertion": "error",
+        "@typescript-eslint/no-dynamic-delete": "error",
+        "@typescript-eslint/no-explicit-any": "error",
+        "@typescript-eslint/no-extraneous-class": "error",
+        "@typescript-eslint/no-invalid-void-type": "error",
+        "@typescript-eslint/no-require-imports": "error",
+        "@typescript-eslint/prefer-for-of": "error",
+        "@typescript-eslint/prefer-literal-enum-member": "error",
+        "@typescript-eslint/prefer-optional-chain": "error",
+        "@typescript-eslint/prefer-ts-expect-error": "error",
+        "@typescript-eslint/unified-signatures": "error",
+        "@typescript-eslint/default-param-last": "error",
+        "@typescript-eslint/no-dupe-class-members": "error",
+        "@typescript-eslint/no-invalid-this": "error",
+        "@typescript-eslint/no-loss-of-precision": "error",
+        "@typescript-eslint/no-shadow": "error",
+        "@typescript-eslint/no-unused-expressions": "error",
+        "@typescript-eslint/no-unused-vars": [
+          "error",
+          {
+            args: "none",
+          },
+        ],
+        "@typescript-eslint/no-useless-constructor": "error",
+
+        // Disabled rules
+        "@typescript-eslint/restrict-template-expressions": "off",
       },
     },
 

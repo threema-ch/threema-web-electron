@@ -3,7 +3,7 @@ const {resolve} = require("path");
 const packager = require("electron-packager");
 const {populateIgnoredPaths} = require("electron-packager/src/copy-filter");
 const debug = require("debug")("dist-electron");
-const {notarize} = require("electron-notarize");
+const {notarize} = require("@electron/notarize");
 const path = require("path");
 const {SemVer} = require("semver");
 const common = require("./packaging/common");
@@ -178,10 +178,11 @@ async function macOSNotarize(executableName, outputPath, osConfig) {
     "Notarization can take a long time. Expect anything between 2 and 35 minutes. ",
   );
   await notarize({
-    appBundleId: executableName,
+    tool: "notarytool",
     appPath: path.join(`${outputPath}`, `${packageName}.app`),
     appleId: process.env.NOTARIZE_APPLE_ID,
     appleIdPassword: process.env.NOTARIZE_APPLE_ID_PASSWORD,
+    teamId: process.env.NOTARIZE_TEAM_ID,
   });
 
   console.log(`Finished notarizing at ${new Date().toLocaleTimeString()}`);

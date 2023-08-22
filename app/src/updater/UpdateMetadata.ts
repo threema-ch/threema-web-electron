@@ -1,12 +1,15 @@
 import * as fs from "fs";
 import * as log from "electron-log";
 import * as minisignVerify from "@threema/wasm-minisign-verify";
+import {isRecord} from "../util/record";
+import {isString} from "../util/string";
+import {isNumber} from "../util/number";
 
 export interface UpdateInfo {
   version: string;
   binary: BinaryMetadata;
   releaseNotes: string;
-  timestamp: string;
+  timestamp: string | number;
 }
 
 export interface BinaryMetadata {
@@ -20,7 +23,10 @@ export class UpdateMetadata {
 
   private readonly _rawUpdateInfo: string;
 
-  public constructor(rawString: string, private readonly _keyset: string[]) {
+  public constructor(
+    rawString: string,
+    private readonly _keyset: string[],
+  ) {
     this._keyset = _keyset;
 
     // We assume that there are no newlines in the json part of the string
@@ -29,7 +35,12 @@ export class UpdateMetadata {
 
     const rawJsonString = rawString.substring(0, jsonEnd + 1);
     this._rawUpdateInfo = rawJsonString;
-    this.updateInfo = JSON.parse(rawJsonString);
+    const updateInfo: unknown = JSON.parse(rawJsonString);
+    if (isValidUpdateInfo(updateInfo)) {
+      this.updateInfo = updateInfo;
+    } else {
+      throw Error("Invalid UpdateInfo provided");
+    }
 
     if (signatureStart >= rawString.length) {
       this.signature = "";
@@ -85,4 +96,36 @@ export class UpdateMetadata {
       return false;
     }
   }
+}
+
+function isValidBinaryMetadata(value: unknown): value is BinaryMetadata {
+  if (
+    isRecord(value) &&
+    "binaryPath" in value &&
+    isString(value.binaryPath) &&
+    "binarySignature" in value &&
+    isString(value.binarySignature)
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
+function isValidUpdateInfo(value: unknown): value is UpdateInfo {
+  if (
+    isRecord(value) &&
+    "version" in value &&
+    isString(value.version) &&
+    "binary" in value &&
+    isValidBinaryMetadata(value.binary) &&
+    "releaseNotes" in value &&
+    isString(value.releaseNotes) &&
+    "timestamp" in value &&
+    (isString(value.timestamp) || isNumber(value.timestamp))
+  ) {
+    return true;
+  }
+
+  return false;
 }

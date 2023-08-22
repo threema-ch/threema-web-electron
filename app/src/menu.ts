@@ -3,10 +3,12 @@ import type {I18n} from "./i18n/i18n";
 import * as log from "electron-log";
 import * as pack from "../package.json";
 
-function getTemplate(locale: I18n): (MenuItemConstructorOptions | MenuItem)[] {
+function getTemplate(
+  locale: I18n,
+): Array<MenuItemConstructorOptions | MenuItem> {
   const isMac = process.platform === "darwin";
 
-  const macManu: (MenuItemConstructorOptions | MenuItem)[] = [
+  const macManu: Array<MenuItemConstructorOptions | MenuItem> = [
     {
       role: "appMenu",
       label: pack.executableName, // This is not actually the name that macOS uses. It is always taken from Info.plist from the app bundle.
@@ -27,7 +29,7 @@ function getTemplate(locale: I18n): (MenuItemConstructorOptions | MenuItem)[] {
     },
   ];
 
-  const appMenu: (MenuItemConstructorOptions | MenuItem)[] = [
+  const appMenu: Array<MenuItemConstructorOptions | MenuItem> = [
     {
       role: "fileMenu",
       label: locale.localized(`fileMenu`),
