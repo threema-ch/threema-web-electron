@@ -89,7 +89,7 @@ at <https://threema.ch/en/contact>.
 
 Threema for desktop is licensed under the GNU Affero General Public License v3.
 
-    Copyright (c) 2016-2021 Threema GmbH
+    Copyright (c) 2016-2023 Threema GmbH
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License, version 3,

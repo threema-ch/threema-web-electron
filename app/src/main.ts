@@ -9,8 +9,6 @@ import {I18n} from "./i18n/i18n";
 import {getMenu} from "./menu";
 import contextMenu from "electron-context-menu";
 import {showOutdatedDialog, appIsValid} from "./appAgeValidityChecker";
-import {isRecordWhere} from "./util/record";
-import {isString} from "./util/string";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 const SECOND = 1000;
@@ -74,32 +72,13 @@ electron.app.on("will-quit", () => {
 // that survives a page reload.
 const appDataStore: Record<string, unknown> = {};
 electron.ipcMain.on("app-data-store:set-value", (event, arg) => {
-  if (
-    isRecordWhere(
-      {
-        key: (key): key is "key" | "value" => key === "key" || key === "value",
-        value: (value): value is unknown => true,
-      },
-      arg,
-    )
-  ) {
-    appDataStore[String(arg.key)] = arg.value;
-  }
-
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+  appDataStore[arg.key.toString()] = arg.value;
   event.returnValue = undefined;
 });
 electron.ipcMain.on("app-data-store:get-value", (event, arg) => {
-  if (
-    isRecordWhere(
-      {
-        key: (key): key is "key" => key === "key",
-        value: isString,
-      },
-      arg,
-    )
-  ) {
-    event.returnValue = appDataStore[arg.key.toString()];
-  }
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+  event.returnValue = appDataStore[arg.key.toString()];
 });
 
 // Check for, download and prompt to install updates.
@@ -529,7 +508,6 @@ async function setMinimalAsDefault(): Promise<void> {
         'localStorage.getItem("settings-userInterface")',
         false,
       );
-
     if (settingsUserInterface === null) {
       await window.webContents.executeJavaScript(
         'localStorage.setItem("settings-userInterface", "minimal")',

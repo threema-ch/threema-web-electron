@@ -11,7 +11,7 @@ export class I18n {
   public constructor(locale: string) {
     log.info(`Loading locale ${locale}`);
     const nonEmptyLocale = locale === "" ? `en` : locale;
-    this._loadedLanguage = this._loadLanguage(nonEmptyLocale) ?? {};
+    this._loadedLanguage = this._loadLanguage(nonEmptyLocale);
     this._locale = nonEmptyLocale;
   }
 
@@ -27,25 +27,29 @@ export class I18n {
     }
   }
 
-  private _loadLanguage(
-    locale: string,
-  ): Record<string, string | undefined> | undefined {
-    let translation: unknown;
-    if (fs.existsSync(this._getPathForLocale(locale))) {
-      translation = JSON.parse(
-        fs.readFileSync(this._getPathForLocale(locale), "utf8"),
-      );
-    } else {
-      translation = JSON.parse(
-        fs.readFileSync(this._getPathForLocale("en"), "utf8"),
-      );
-    }
+  private _loadLanguage(locale: string): Record<string, string | undefined> {
+    const exists = fs.existsSync(this._getPathForLocale(locale));
+    const translation: unknown = JSON.parse(
+      exists
+        ? fs.readFileSync(this._getPathForLocale(locale), "utf8")
+        : fs.readFileSync(this._getPathForLocale("en"), "utf8"),
+    );
 
-    if (isRecordWhere({key: isString, value: isOptionalString}, translation)) {
+    if (
+      isRecordWhere(
+        {
+          key: isString,
+          value: isOptionalString,
+        },
+        translation,
+      )
+    ) {
       return translation;
     }
 
-    return undefined;
+    // This shouldn't happen, but if even the fallback language (`en`) is
+    // missing, don't return any translation strings.
+    return {};
   }
 
   private _getPathForLocale(locale: string): string {

@@ -3,14 +3,9 @@ import {isString} from "./string";
 import {isSymbol} from "./symbol";
 
 /**
- * Union type of allowed {@link Record} keys.
- */
-export type AnyKey = string | number | symbol;
-
-/**
  * Whether `it` overlaps with {@link AnyKey}.
  */
-export function isAnyKey(it: unknown): it is AnyKey {
+export function isPropertyKey(it: unknown): it is PropertyKey {
   return isString(it) || isNumber(it) || isSymbol(it);
 }
 
@@ -34,7 +29,7 @@ export function isRecord(
  * @param it The object to check.
  * @returns Whether `it` is of type `Record<string, TValue>`.
  */
-export function isRecordWhere<TKey extends AnyKey, TValue>(
+export function isRecordWhere<TValue, TKey extends PropertyKey = PropertyKey>(
   {
     key: keyPredicate,
     value: valuePredicate,
@@ -50,7 +45,7 @@ export function isRecordWhere<TKey extends AnyKey, TValue>(
 
   return Object.entries(it).every(
     ([key, value]) =>
-      (keyPredicate ? keyPredicate(key) : isAnyKey(key)) &&
+      (keyPredicate ? keyPredicate(key) : isPropertyKey(key)) &&
       valuePredicate(value),
   );
 }

@@ -8,7 +8,7 @@ function getTemplate(
 ): Array<MenuItemConstructorOptions | MenuItem> {
   const isMac = process.platform === "darwin";
 
-  const macManu: Array<MenuItemConstructorOptions | MenuItem> = [
+  const macMenu: Array<MenuItemConstructorOptions | MenuItem> = [
     {
       role: "appMenu",
       label: pack.executableName, // This is not actually the name that macOS uses. It is always taken from Info.plist from the app bundle.
@@ -93,7 +93,7 @@ function getTemplate(
     },
   ];
 
-  return isMac ? macManu.concat(appMenu) : appMenu;
+  return isMac ? macMenu.concat(appMenu) : appMenu;
 }
 
 export function getMenu(locale: I18n): Menu {
