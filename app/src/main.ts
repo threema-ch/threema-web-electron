@@ -1,7 +1,9 @@
 import * as electron from "electron";
+// eslint-disable-next-line @typescript-eslint/naming-convention
 import * as ChildProcess from "child_process";
 import {format as formatUrl} from "url";
 import * as path from "path";
+// eslint-disable-next-line @typescript-eslint/naming-convention
 import * as Updater from "./updater/updater";
 import * as pack from "../package.json";
 import * as log from "electron-log";
