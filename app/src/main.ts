@@ -550,7 +550,7 @@ function getWebLocation(): string {
 }
 
 function setupLogging(): void {
-  log.catchErrors();
+  log.errorHandler.startCatching();
 }
 
 function setupMenu(locale: I18n): void {
