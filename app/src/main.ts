@@ -155,6 +155,35 @@ async function start(session: electron.Session): Promise<void> {
     },
   });
 
+  window.on("minimize", (event: any) => {
+    event.preventDefault();
+    if(window != null)
+      window.hide();
+  });
+
+  let tray = null
+  electron.app.whenReady().then(() => {
+    tray = new electron.Tray(electron.nativeImage.createFromPath(path.join(
+      electron.app.getAppPath(),
+      "assets",
+      "icons",
+      "png",
+      "consumer-512x512.png")
+    ));
+    const locale = new I18n(electron.app.getLocale());
+    const contextMenu = electron.Menu.buildFromTemplate([
+      { label: locale.localized("unhide"), click:  function(){
+        if(window != null)
+          window.show();
+      } },
+      { label: locale.localized("quit"), click:  function(){
+        electron.app.quit();
+    } }
+    ])
+    tray.setToolTip("Threema Desktop")
+    tray.setContextMenu(contextMenu)
+  })
+
   window.webContents.on(
     "did-fail-load",
     (
