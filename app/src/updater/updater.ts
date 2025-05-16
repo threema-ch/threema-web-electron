@@ -10,6 +10,7 @@ import * as log from "electron-log";
 import type {MessageBoxOptions} from "electron/main";
 import {getWeakRandomString} from "./random";
 import type {I18n} from "../i18n/i18n";
+import {getWindowsRegistryValue} from "../util/windows";
 
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
@@ -65,6 +66,22 @@ export class Updater {
   ): Promise<void> {
     if (!this._isRunning && !this._isSuspended) {
       this._isRunning = true;
+
+      if (process.platform === "win32") {
+        const updateCheckRegistryValue =
+          getWindowsRegistryValue("UpdateCheck")?.trim();
+        log.info(
+          `Windows Registry property "UpdateCheck" is set to "${updateCheckRegistryValue}"`,
+        );
+
+        // If update checks were explicitly disabled via Windows registry key,
+        // prevent performing update checks.
+        if (updateCheckRegistryValue === "no") {
+          log.info("Skipping update check due to Windows Registry property");
+          this._isRunning = false;
+          return;
+        }
+      }
 
       try {
         const updateInfo = await this._checkAndInstallUpdates(
