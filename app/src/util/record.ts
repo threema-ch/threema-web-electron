@@ -1,6 +1,6 @@
-import {isNumber} from "./number";
-import {isString} from "./string";
-import {isSymbol} from "./symbol";
+import {isNumber} from "./number.js";
+import {isString} from "./string.js";
+import {isSymbol} from "./symbol.js";
 
 /**
  * Whether `it` overlaps with {@link AnyKey}.

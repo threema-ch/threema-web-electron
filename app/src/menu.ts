@@ -1,7 +1,10 @@
-import {Menu, MenuItem, MenuItemConstructorOptions, shell} from "electron";
-import type {I18n} from "./i18n/i18n";
-import * as log from "electron-log";
-import * as pack from "../package.json";
+import electron, {
+  type MenuItem,
+  type MenuItemConstructorOptions,
+} from "electron";
+import log from "electron-log";
+import packageJson from "../package.json" with {type: "json"};
+import type {I18n} from "./i18n/i18n.js";
 
 function getTemplate(
   locale: I18n,
@@ -11,11 +14,11 @@ function getTemplate(
   const macMenu: Array<MenuItemConstructorOptions | MenuItem> = [
     {
       role: "appMenu",
-      label: pack.executableName, // This is not actually the name that macOS uses. It is always taken from Info.plist from the app bundle.
+      label: packageJson.executableName, // This is not actually the name that macOS uses. It is always taken from Info.plist from the app bundle.
       submenu: [
         {
           role: "about",
-          label: `${locale.localized(`about`)} ${pack.executableName}`,
+          label: `${locale.localized(`about`)} ${packageJson.executableName}`,
         },
         {type: "separator"},
         {role: "services"},
@@ -84,7 +87,7 @@ function getTemplate(
         {
           label: locale.localized(`supportLinkLabel`),
           click: (): void => {
-            shell
+            electron.shell
               .openExternal("https://threema.ch/support")
               .catch((e) => log.error("Could not open support page.", e));
           },
@@ -96,6 +99,6 @@ function getTemplate(
   return isMac ? macMenu.concat(appMenu) : appMenu;
 }
 
-export function getMenu(locale: I18n): Menu {
-  return Menu.buildFromTemplate(getTemplate(locale));
+export function getMenu(locale: I18n): electron.Menu {
+  return electron.Menu.buildFromTemplate(getTemplate(locale));
 }

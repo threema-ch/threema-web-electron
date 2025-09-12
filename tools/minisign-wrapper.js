@@ -1,39 +1,37 @@
-const execSync = require("child_process").execSync;
-const fs = require("fs");
-const tmp = require("tmp-promise");
+import {execSync} from "node:child_process";
+import fs from "node:fs";
+import tmp from "tmp-promise";
 
-module.exports = {
-  signString(inputString) {
-    tmp.setGracefulCleanup();
+export function signString(inputString) {
+  tmp.setGracefulCleanup();
 
-    const secretKeyFile = tmp.fileSync({mode: "0700"});
-    fs.writeFileSync(secretKeyFile.name, process.env.SECRET_KEY);
+  const secretKeyFile = tmp.fileSync({mode: "0700"});
+  fs.writeFileSync(secretKeyFile.name, process.env.SECRET_KEY);
 
-    const signableFile = tmp.fileSync({mode: "0700"});
-    fs.writeFileSync(signableFile.name, inputString);
+  const signableFile = tmp.fileSync({mode: "0700"});
+  fs.writeFileSync(signableFile.name, inputString);
 
-    execSync(
-      `echo "$SECRET_KEY_PASSWORD" | minisign -S -m ${signableFile.name} -s ${secretKeyFile.name}`,
-    );
+  execSync(
+    `echo "$SECRET_KEY_PASSWORD" | minisign -S -m ${signableFile.name} -s ${secretKeyFile.name}`,
+  );
 
-    secretKeyFile.removeCallback();
-    signableFile.removeCallback();
+  secretKeyFile.removeCallback();
+  signableFile.removeCallback();
 
-    return fs.readFileSync(`${signableFile.name}.minisig`);
-  },
+  return fs.readFileSync(`${signableFile.name}.minisig`);
+}
 
-  signBuffer(atPath) {
-    tmp.setGracefulCleanup();
+export function signBuffer(atPath) {
+  tmp.setGracefulCleanup();
 
-    const secretKeyFile = tmp.fileSync({mode: "0700"});
-    fs.writeFileSync(secretKeyFile.name, process.env.SECRET_KEY);
+  const secretKeyFile = tmp.fileSync({mode: "0700"});
+  fs.writeFileSync(secretKeyFile.name, process.env.SECRET_KEY);
 
-    execSync(
-      `echo "$SECRET_KEY_PASSWORD" | minisign -S -m ${atPath} -s ${secretKeyFile.name}`,
-    );
+  execSync(
+    `echo "$SECRET_KEY_PASSWORD" | minisign -S -m ${atPath} -s ${secretKeyFile.name}`,
+  );
 
-    secretKeyFile.removeCallback();
+  secretKeyFile.removeCallback();
 
-    return fs.readFileSync(`${atPath}.minisig`);
-  },
-};
+  return fs.readFileSync(`${atPath}.minisig`);
+}

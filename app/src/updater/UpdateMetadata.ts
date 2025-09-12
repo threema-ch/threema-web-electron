@@ -1,9 +1,13 @@
-import * as fs from "fs";
-import * as log from "electron-log";
-import * as minisignVerify from "@threema/wasm-minisign-verify";
-import {isRecord} from "../util/record";
-import {isString} from "../util/string";
-import {isNumber} from "../util/number";
+import {
+  PublicKey,
+  setupLogging,
+  Signature,
+} from "@threema/wasm-minisign-verify";
+import log from "electron-log";
+import fs from "node:fs";
+import {isNumber} from "../util/number.js";
+import {isRecord} from "../util/record.js";
+import {isString} from "../util/string.js";
 
 export interface UpdateInfo {
   version: string;
@@ -86,10 +90,10 @@ export class UpdateMetadata {
     rawPublicKey: string,
     signature: string,
   ): boolean {
-    minisignVerify.setupLogging("info");
+    setupLogging("info");
     try {
-      const publicKey = minisignVerify.PublicKey.decode(rawPublicKey);
-      const sigInfo = minisignVerify.Signature.decode(signature);
+      const publicKey = PublicKey.decode(rawPublicKey);
+      const sigInfo = Signature.decode(signature);
       return publicKey.verify(signedData, sigInfo);
     } catch (err) {
       log.error(`Verification failed: ${err}`);

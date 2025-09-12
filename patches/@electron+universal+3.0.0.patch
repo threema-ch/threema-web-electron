@@ -1,0 +1,19 @@
+diff --git a/node_modules/@electron/universal/dist/index.js b/node_modules/@electron/universal/dist/index.js
+index 9b068da..d0931e6 100644
+--- a/node_modules/@electron/universal/dist/index.js
++++ b/node_modules/@electron/universal/dist/index.js
+@@ -5,12 +5,13 @@ import * as asar from '@electron/asar';
+ import { spawn } from '@malept/cross-spawn-promise';
+ import * as dircompare from 'dir-compare';
+ import { minimatch } from 'minimatch';
+-import * as plist from 'plist';
++import plistModule from 'plist';
+ import { AsarMode, detectAsarMode, isUniversalMachO, mergeASARs } from './asar-utils.js';
+ import { AppFileType, fsMove, getAllAppFiles, readMachOHeader } from './file-utils.js';
+ import { sha } from './sha.js';
+ import { d } from './debug.js';
+ import { computeIntegrityData } from './integrity.js';
++const plist = plistModule.parse ? plistModule : { parse: plistModule };
+ const dupedFiles = (files) => files.filter((f) => f.type !== AppFileType.SNAPSHOT && f.type !== AppFileType.APP_CODE);
+ export const makeUniversalApp = async (opts) => {
+     d('making a universal app with options', opts);

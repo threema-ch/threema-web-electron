@@ -1,22 +1,27 @@
-const installer = require("electron-installer-windows");
-const common = require("./common");
-const {getWindowsSigntoolOptions} = require("../signing/sign-windows");
-const path = require("node:path");
-const {unlinkSync} = require("node:fs");
+import installer from "electron-installer-windows";
+import {unlinkSync} from "node:fs";
+import path from "node:path";
+import {getWindowsSigntoolOptions} from "../signing/sign-windows.js";
+import {
+  getChannelName,
+  getPackage,
+  getTitlecaseChannelName,
+  hasChannelName,
+} from "./common.js";
 
 async function main() {
   const myArgs = process.argv.slice(2);
   const flavor = myArgs[0];
 
-  const pkg = common.getPackage();
+  const pkg = getPackage();
   const configs = pkg.electron.buildConfigs;
 
   let appDirName = configs["windows"][flavor]["name"];
   let executableName = configs["windows"][flavor]["executableName"];
 
-  if (common.hasChannelName()) {
-    appDirName += ` ${common.getTitlecaseChannelName()}`;
-    executableName += `-${common.getChannelName()}`;
+  if (hasChannelName()) {
+    appDirName += ` ${getTitlecaseChannelName()}`;
+    executableName += `-${getChannelName()}`;
   }
 
   const rootPath = process.cwd();

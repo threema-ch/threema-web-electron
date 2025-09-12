@@ -1,16 +1,19 @@
-import {app, AutoUpdater, Dialog} from "electron";
-import {Downloader} from "./downloader";
-import * as fs from "fs";
-import * as crypto from "crypto";
-import {UpdateMetadata, UpdateInfo} from "./UpdateMetadata";
-import * as semver from "semver";
-import * as path from "path";
-import * as pack from "../../package.json";
-import * as log from "electron-log";
-import type {MessageBoxOptions} from "electron/main";
-import {getWeakRandomString} from "./random";
-import type {I18n} from "../i18n/i18n";
-import {getWindowsRegistryValue} from "../util/windows";
+import electron, {
+  type AutoUpdater,
+  type Dialog,
+  type MessageBoxOptions,
+} from "electron";
+import log from "electron-log";
+import crypto from "node:crypto";
+import fs from "node:fs";
+import path from "node:path";
+import {lt, prerelease, valid} from "semver";
+import packageJson from "../../package.json" with {type: "json"};
+import type {I18n} from "../i18n/i18n.js";
+import {getWindowsRegistryValue} from "../util/windows.js";
+import {Downloader} from "./downloader.js";
+import {getWeakRandomString} from "./random.js";
+import {UpdateInfo, UpdateMetadata} from "./UpdateMetadata.js";
 
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
@@ -45,8 +48,8 @@ export class Updater {
     this._handlePowerMonitor(powerMonitor);
 
     this._downloader = new Downloader(
-      pack.updateServer.hostname,
-      pack.updateServer.path,
+      packageJson.updateServer.hostname,
+      packageJson.updateServer.path,
       this._getUpdateMetadataFilename(),
       this._getNewDownloadFolder(this._tempFolder),
       certificateSet,
@@ -216,7 +219,7 @@ export class Updater {
     const updateFolder = Updater._getUpdateParentFolder(tempFolder);
     if (fs.existsSync(updateFolder)) {
       try {
-        fs.rmdirSync(updateFolder, {recursive: true});
+        fs.rmSync(updateFolder, {recursive: true});
       } catch (err) {
         log.error(
           `An error occurred while cleaning the download folder. Error: ${err}`,
@@ -232,7 +235,7 @@ export class Updater {
     const dialogOpts: MessageBoxOptions = {
       type: "info",
       buttons: [locale.localized("restart"), locale.localized("later")],
-      title: `${locale.localized("updateDialogTitle")} ${pack.executableName}`,
+      title: `${locale.localized("updateDialogTitle")} ${packageJson.executableName}`,
       message: locale.localized("updateDialogDetail"),
       detail: releaseNotes ?? locale.localized("noReleaseNotesAvailable"),
     };
@@ -251,7 +254,7 @@ export class Updater {
     if (Updater._platformAllowsAutoupdates()) {
       return path.join(
         tempFolder,
-        `ch.threema-web-${pack.flavour}-desktop`,
+        `ch.threema-web-${packageJson.flavour}-desktop`,
         "updates",
       );
     } else {
@@ -276,7 +279,7 @@ export class Updater {
 
     const updateMetadata = new UpdateMetadata(
       rawUpdateInfo,
-      pack.updateSignatureKeyset,
+      packageJson.updateSignatureKeyset,
     );
     const metadataSignatureCheckPassed =
       updateMetadata.containsValidMetadataSignature();
@@ -498,8 +501,8 @@ export class Updater {
     currentVersion: string,
     newVersion: string,
   ): boolean {
-    const isValid = semver.valid(newVersion) !== null;
-    const isNewer = semver.lt(currentVersion, newVersion);
+    const isValid = valid(newVersion) !== null;
+    const isNewer = lt(currentVersion, newVersion);
 
     return isValid && isNewer;
   }
@@ -532,11 +535,11 @@ export class Updater {
   }
 
   private _getFlavour(): string {
-    return pack.flavour;
+    return packageJson.flavour;
   }
 
   private _getChannelName(): string {
-    const prereleaseChannel = semver.prerelease(app.getVersion());
+    const prereleaseChannel = prerelease(electron.app.getVersion());
     if (
       prereleaseChannel !== null &&
       typeof prereleaseChannel[0] === "string"

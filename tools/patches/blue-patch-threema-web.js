@@ -1,10 +1,10 @@
-const common = require("./../packaging/common");
-const fs = require("fs");
-const path = require("path");
+import fs from "node:fs";
+import path from "node:path";
+import {getPackage} from "./../packaging/common.js";
 
 console.log(`Patching Threema Web for Threema Blue`);
 
-const pack = common.getPackage();
+const pack = getPackage();
 
 const rootPath = process.cwd();
 const filePath = path.join(

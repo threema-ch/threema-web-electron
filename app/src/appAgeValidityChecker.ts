@@ -1,7 +1,6 @@
-import * as log from "electron-log";
-import type {I18n} from "./i18n/i18n";
-import type {MessageBoxOptions} from "electron/main";
-import {shell} from "electron";
+import electron, {type MessageBoxOptions} from "electron";
+import log from "electron-log";
+import type {I18n} from "./i18n/i18n.js";
 
 const hundredEightyDaysInMs = 180 * 24 * 60 * 60 * 1000;
 
@@ -15,7 +14,7 @@ export async function showOutdatedDialog(
     dialog
       .showMessageBox(dialogOpts)
       .then(async ({response}) => {
-        await shell
+        await electron.shell
           .openExternal("https://threema.ch/faq/web_desktop_outdated")
           .catch((error) => {
             log.error(`An error ocurred while openining support URL: ${error}`);

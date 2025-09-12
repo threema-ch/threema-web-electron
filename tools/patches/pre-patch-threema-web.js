@@ -1,7 +1,7 @@
-const common = require("./../packaging/common");
-const execSync = require("child_process").execSync;
+import {execSync} from "node:child_process";
+import {getPackage} from "./../packaging/common.js";
 
-const pack = common.getPackage();
+const pack = getPackage();
 const versionString = `${pack.version}`;
 
 console.log(`Patch Threema Web version number to ${versionString}`);

@@ -4,8 +4,8 @@
     "lib": ["dom", "esnext"],
     "types": ["electron", "node"],
     "outDir": "./dist",
+    "allowJs": true,
     "skipLibCheck": true
   },
-
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts", "src/preload.cjs"]
 }

@@ -1,16 +1,20 @@
-const common = require("./../packaging/common");
-const fs = require("fs");
-const path = require("path");
+import fs from "node:fs";
+import path from "node:path";
+import {
+  getPackage,
+  getTitlecaseChannelName,
+  hasChannelName,
+} from "./../packaging/common.js";
 
 const myArgs = process.argv.slice(2);
 const os = myArgs[0];
 const flavour = myArgs[1];
 
-const pack = common.getPackage();
+const pack = getPackage();
 
 let prodName = pack.electron.buildConfigs[os][flavour]["name"];
-if (common.hasChannelName()) {
-  prodName += ` ${common.getTitlecaseChannelName()}`;
+if (hasChannelName()) {
+  prodName += ` ${getTitlecaseChannelName()}`;
 }
 
 console.log(`Replacing Threema Web with ${prodName}`);

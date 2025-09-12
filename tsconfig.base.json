@@ -2,8 +2,8 @@
   "compilerOptions": {
     "types": [],
     "target": "esnext",
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
 
     "baseUrl": ".",
     "resolveJsonModule": true,

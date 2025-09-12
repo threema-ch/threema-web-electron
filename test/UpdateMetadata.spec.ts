@@ -1,9 +1,9 @@
 import {expect} from "chai";
 import {readFileSync} from "fs";
-import {UpdateMetadata} from "../app/src/updater/UpdateMetadata";
-import * as pack from "../app/package.json";
+import {UpdateMetadata} from "../app/src/updater/UpdateMetadata.ts";
+import packageJson from "../app/package.json" with {type: "json"};
 
-const testKeyset = pack.updateSignatureKeyset.concat([
+const testKeyset = packageJson.updateSignatureKeyset.concat([
   "untrusted comment: minisign public key DFAE6029AA04EBA8\nRWSo6wSqKWCu39Rvw1Oc7Eqk7y3fqUyxRC4Djmy2b2LItIfBGNgRQaAl\n",
   "untrusted comment: minisign public key C2BECB8B6549E9DF\nRWTf6Ulli8u+wttD0hup3iiznHHA7wLPcw9hSNP3YaoF8w/ivnuHqKoC\n",
   "untrusted comment: minisign public key C0A58C03E58F1FDE\nRWTeH4/lA4ylwPynPf6IJM2K+ipZj/8ANt0tw1GRJ4Cu8GgwooKY3sFa\n",

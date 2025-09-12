@@ -1,9 +1,12 @@
 {
   "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "target": "es2017",
-    "module": "commonjs",
+    "target": "esnext",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "noImplicitAny": true,
     "sourceMap": true,
     "strict": true,

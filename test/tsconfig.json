@@ -3,8 +3,8 @@
   "compilerOptions": {
     "lib": ["dom", "esnext"],
     "types": ["chai", "mocha", "node"],
-    "module": "commonjs"
+    "allowImportingTsExtensions": true,
+    "noEmit": true
   },
-
   "include": ["**/*.ts"]
 }

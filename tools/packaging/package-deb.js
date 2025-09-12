@@ -1,17 +1,22 @@
-const installer = require("electron-installer-debian");
-const common = require("./common");
+import installer from "electron-installer-debian";
+import {
+  getChannelName,
+  getPackage,
+  getTitlecaseChannelName,
+  hasChannelName,
+} from "./common.js";
 
 async function main() {
   const myArgs = process.argv.slice(2);
-  const pkg = common.getPackage();
+  const pkg = getPackage();
   const configs = pkg.electron.buildConfigs;
 
   let appDirName = configs["linux-deb"][myArgs[0]]["name"];
   let executableName = configs["linux-deb"][myArgs[0]]["executableName"];
 
-  if (common.hasChannelName()) {
-    appDirName += ` ${common.getTitlecaseChannelName()}`;
-    executableName += `-${common.getChannelName()}`;
+  if (hasChannelName()) {
+    appDirName += ` ${getTitlecaseChannelName()}`;
+    executableName += `-${getChannelName()}`;
   }
 
   console.log(`Creating package for ${appDirName} (this may take a while)`);

@@ -1,30 +1,39 @@
-const fs = require("fs");
-const path = require("path");
-const common = require("./packaging/common");
-const {copyFile} = require("fs/promises");
-const {SemVer} = require("semver");
-const crypto = require("crypto");
-const minisignwrapper = require("./minisign-wrapper");
+import crypto from "node:crypto";
+import fs from "node:fs";
+import {copyFile} from "node:fs/promises";
+import path from "node:path";
+import url from "node:url";
+import {SemVer} from "semver";
+import {signBuffer, signString} from "./minisign-wrapper.js";
+import {
+  getChannelName,
+  getPackage,
+  getProductName,
+  getTitlecaseChannelName,
+  getVersionNumber,
+  hasChannelName,
+} from "./packaging/common.js";
 
 async function generateDownloads() {
   const myArgs = process.argv.slice(2);
   const os = myArgs[1];
   const flavour = myArgs[2];
 
-  const version = common.getVersionNumber();
-  const channel = common.getChannelName();
+  const version = getVersionNumber();
+  const channel = getChannelName();
 
   writeVersionFile(version, channel);
 
   const downloadsFolder = "app/build/dist-electron/downloads";
 
-  const prodName = common
-    .getProductName(os === `linux-rpm` ? `linux-deb` : os, flavour)
-    .replaceAll(" ", "-");
+  const prodName = getProductName(
+    os === `linux-rpm` ? `linux-deb` : os,
+    flavour,
+  ).replaceAll(" ", "-");
 
   console.log("Product Name is ", prodName);
 
-  const releaseName = `${prodName}-${common.getTitlecaseChannelName()}`;
+  const releaseName = `${prodName}-${getTitlecaseChannelName()}`;
 
   console.log("Release Name is ", releaseName);
 
@@ -80,8 +89,8 @@ async function generateMetadata() {
   const os = args[1];
   const flavour = args[2];
 
-  const version = common.getVersionNumber();
-  const channel = common.getChannelName();
+  const version = getVersionNumber();
+  const channel = getChannelName();
 
   writeVersionFile(version, channel);
 
@@ -127,11 +136,11 @@ async function generateMetadata() {
 }
 
 function getMetadataSignature(stringMetadataBuffer) {
-  return minisignwrapper.signString(stringMetadataBuffer);
+  return signString(stringMetadataBuffer);
 }
 
 function getSignatureForBinary(binaryPath) {
-  return minisignwrapper.signBuffer(binaryPath);
+  return signBuffer(binaryPath);
 }
 
 function getUpdatePath() {
@@ -160,40 +169,40 @@ function getDownloadExtension(os) {
 
 function getDownloadFilename(os, flavour, channel, version) {
   if (os === "macOS") {
-    return getMacOSDownloadFilename(flavour, channel);
+    return getMacOSDownloadFilename(flavour);
   } else if (os === "windows") {
     return getWindowsDownloadFilename(flavour, channel, version);
   } else if (os === "linux-deb") {
-    return getLinuxDebFilename(flavour, channel, version);
+    return getLinuxDebFilename(flavour, version);
   } else if (os === "linux-rpm") {
-    return getLinuxRPMFilename(flavour, channel, version);
+    return getLinuxRPMFilename(flavour, version);
   } else {
     throw new Error(`Unsupported OS ${os}`);
   }
 }
 
-function getLinuxRPMFilename(flavour, channel, version) {
-  const pack = common.getPackage();
+function getLinuxRPMFilename(flavour, version) {
+  const pack = getPackage();
   const appDirName = pack["electron"]["buildConfigs"]["linux-deb"][flavour][
     "name"
   ].replaceAll(" ", "-");
   console.log(`appDirName ${appDirName}`);
-  const versionString = getLinuxRPMVersionString(version, channel);
+  const versionString = getLinuxRPMVersionString(version);
   const name = `${appDirName}${getRPMChannel()}${versionString}-1.x86_64.rpm`;
   console.log("name");
   return name;
 }
 
 function getRPMChannel() {
-  if (common.hasChannelName()) {
-    return `-${common.getTitlecaseChannelName()}-`;
+  if (hasChannelName()) {
+    return `-${getTitlecaseChannelName()}-`;
   } else {
     return `-`;
   }
 }
 
-function getLinuxDebFilename(flavour, channel, version) {
-  const versionString = getLinuxDebVersionString(version, channel);
+function getLinuxDebFilename(flavour, version) {
+  const versionString = getLinuxDebVersionString(version);
   let name = "";
   if (flavour === "consumer") {
     name = `threema${getDebChannel()}${versionString}_amd64.deb`;
@@ -205,8 +214,8 @@ function getLinuxDebFilename(flavour, channel, version) {
 }
 
 function getDebChannel() {
-  if (common.hasChannelName()) {
-    return `-${common.getChannelName()}_`;
+  if (hasChannelName()) {
+    return `-${getChannelName()}_`;
   } else {
     return `_`;
   }
@@ -232,25 +241,22 @@ function getFilename(os, flavour, channel, version) {
 }
 
 function getMacOSFilename(flavour, channel) {
-  const pack = common.getPackage();
+  const pack = getPackage();
   const zipname = pack["electron"]["buildConfigs"]["macOS"][flavour]["zipName"];
   console.log(`Flavour is ${flavour}`);
-  if (common.hasChannelName()) {
+  if (hasChannelName()) {
     return `${zipname}-${channel}.zip`;
   } else {
     return `${zipname}.zip`;
   }
 }
 
-function getMacOSDownloadFilename(flavour, channel) {
-  const pack = common.getPackage();
+function getMacOSDownloadFilename(flavour) {
+  const pack = getPackage();
   const zipname = pack["electron"]["buildConfigs"]["macOS"][flavour]["name"];
   console.log(`Flavour is ${flavour}`);
-  if (common.hasChannelName()) {
-    return `${`${zipname} ${common.getTitlecaseChannelName()}`.substring(
-      0,
-      26,
-    )}.dmg`;
+  if (hasChannelName()) {
+    return `${`${zipname} ${getTitlecaseChannelName()}`.substring(0, 26)}.dmg`;
   } else {
     return `${`${zipname}`.substring(0, 26)}.dmg`;
   }
@@ -267,29 +273,29 @@ function getWindowsFilename(flavour, channel, version) {
 
 function getWindowsVersionString(version, channel) {
   const semVersion = new SemVer(version);
-  if (common.hasChannelName()) {
+  if (hasChannelName()) {
     return `_${channel}-${semVersion.major}.${semVersion.minor}.${
       semVersion.patch
-    }-${common.getChannelName()}`;
+    }-${getChannelName()}`;
   } else {
     return `-${semVersion.major}.${semVersion.minor}.${semVersion.patch}`;
   }
 }
 
-function getLinuxDebVersionString(version, channel) {
+function getLinuxDebVersionString(version) {
   const semVersion = new SemVer(version);
   const versionedChannel = semVersion.prerelease.join(".");
-  if (common.hasChannelName()) {
+  if (hasChannelName()) {
     return `${semVersion.major}.${semVersion.minor}.${semVersion.patch}~${versionedChannel}`;
   } else {
     return `${semVersion.major}.${semVersion.minor}.${semVersion.patch}`;
   }
 }
 
-function getLinuxRPMVersionString(version, channel) {
+function getLinuxRPMVersionString(version) {
   const semVersion = new SemVer(version);
   const versionedChannel = semVersion.prerelease.join(".");
-  if (common.hasChannelName()) {
+  if (hasChannelName()) {
     return `${semVersion.major}.${semVersion.minor}.${semVersion.patch}.${versionedChannel}`;
   } else {
     return `${semVersion.major}.${semVersion.minor}.${semVersion.patch}`;
@@ -315,6 +321,6 @@ function main() {
   }
 }
 
-if (require.main === module) {
+if (process.argv[1] === url.fileURLToPath(import.meta.url)) {
   main();
 }

@@ -1,16 +1,16 @@
-import * as https from "node:https";
-import * as fs from "node:fs";
-import * as fsPromises from "node:fs/promises";
-import * as path from "node:path";
-import type {UpdateMetadata} from "./UpdateMetadata";
-import {SemVer} from "semver";
-import * as log from "electron-log";
+import log from "electron-log";
+import fs from "node:fs";
+import fsPromises from "node:fs/promises";
 import type {IncomingMessage} from "node:http";
-import * as tls from "node:tls";
-import {getWeakRandomString} from "./random";
-import {base64ToU8a, u8aToBase64} from "../util/base64";
-import {byteEquals} from "../util/byte";
-import {spkiFingerprint} from "../util/cert";
+import https from "node:https";
+import path from "node:path";
+import tls from "node:tls";
+import {SemVer} from "semver";
+import {base64ToU8a, u8aToBase64} from "../util/base64.js";
+import {byteEquals} from "../util/byte.js";
+import {spkiFingerprint} from "../util/cert.js";
+import {getWeakRandomString} from "./random.js";
+import type {UpdateMetadata} from "./UpdateMetadata.js";
 
 export class Downloader {
   public constructor(

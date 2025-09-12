@@ -1,10 +1,10 @@
-const path = require("node:path");
-const {execFileSync} = require("node:child_process");
+import path from "node:path";
+import {execFileSync} from "node:child_process";
 
 /**
  * Returns the full path to `signtool.exe`.
  */
-function getWindowsSigntoolPath() {
+export function getWindowsSigntoolPath() {
   // For more information on how to determine some of the env variables below,
   // and for documentation on the syntax used, please refer to
   // https://stackoverflow.com/a/54439759/284318
@@ -40,7 +40,7 @@ function getWindowsSigntoolPath() {
  * );
  * ```
  */
-function getWindowsSigntoolOptions(flavor) {
+export function getWindowsSigntoolOptions(flavor) {
   const certificatePath = process.env.WIN_SIGN_CERT_PATH;
   if (certificatePath === undefined) {
     throw new Error("Missing WIN_SIGN_CERT_PATH env var");
@@ -88,7 +88,7 @@ function getWindowsSigntoolOptions(flavor) {
 /**
  * Sign a Windows Binary (.exe) or Package (.msix).
  */
-function signWindowsBinaryOrPackage(pathToSign, flavor) {
+export function signWindowsBinaryOrPackage(pathToSign, flavor) {
   const filename = path.basename(pathToSign);
 
   console.log(`Start signing binary "${filename}"`);
@@ -129,9 +129,3 @@ function determineAppName(flavor) {
       throw new Error(`Invalid signing flavor: ${flavor}`);
   }
 }
-
-module.exports = {
-  getWindowsSigntoolPath,
-  getWindowsSigntoolOptions,
-  signWindowsBinaryOrPackage,
-};

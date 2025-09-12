@@ -1,16 +1,19 @@
-const createDMG = require("electron-installer-dmg").createDMG;
-const common = require("./common");
+import {createRequire} from "node:module";
+import {getPackage, getTitlecaseChannelName, hasChannelName} from "./common.js";
 
-function main() {
+const require = createRequire(import.meta.url);
+const {createDMG} = require("electron-installer-dmg");
+
+async function main() {
   const myArgs = process.argv.slice(2);
-  const pkg = common.getPackage();
+  const pkg = getPackage();
   const configs = pkg.electron.buildConfigs;
   const flavour = myArgs[0];
 
   let appDirName = configs["macOS"][flavour]["name"];
 
-  if (common.hasChannelName()) {
-    appDirName += ` ${common.getTitlecaseChannelName()}`;
+  if (hasChannelName()) {
+    appDirName += ` ${getTitlecaseChannelName()}`;
   }
 
   console.log(`Creating package for ${appDirName} (this may take a while)`);
@@ -33,7 +36,7 @@ function main() {
     },
   };
 
-  createDMG(options, (err) => {
+  await createDMG(options, (err) => {
     if (err) {
       console.error(err);
       process.exit(1);

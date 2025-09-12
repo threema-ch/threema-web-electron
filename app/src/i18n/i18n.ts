@@ -1,8 +1,8 @@
-import * as path from "path";
-import * as fs from "fs";
-import * as log from "electron-log";
-import {isRecordWhere} from "../util/record";
-import {isOptionalString, isString} from "../util/string";
+import log from "electron-log";
+import fs from "node:fs";
+import path from "node:path";
+import {isRecordWhere} from "../util/record.js";
+import {isOptionalString, isString} from "../util/string.js";
 
 export class I18n {
   private readonly _loadedLanguage: Record<string, string | undefined>;
@@ -53,6 +53,6 @@ export class I18n {
   }
 
   private _getPathForLocale(locale: string): string {
-    return path.join(__dirname, "resources", `${locale}.json`);
+    return path.join(import.meta.dirname, "resources", `${locale}.json`);
   }
 }

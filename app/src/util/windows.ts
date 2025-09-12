@@ -1,5 +1,5 @@
+import log from "electron-log";
 import {execSync} from "node:child_process";
-import * as log from "electron-log";
 
 /**
  * Read a property from the Windows Registry and return its value as a string.

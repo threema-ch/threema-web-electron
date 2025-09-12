@@ -1,18 +1,21 @@
-const fs = require("fs");
-const {resolve} = require("path");
-const {execFileSync} = require("child_process");
-const packager = require("electron-packager");
-const {populateIgnoredPaths} = require("electron-packager/src/copy-filter");
-const debug = require("debug")("dist-electron");
-const {notarize} = require("@electron/notarize");
-const path = require("path");
-const {SemVer} = require("semver");
-const common = require("./packaging/common");
-const makeUniversalApp = require("@electron/universal");
-const OSXSign = require("@electron/osx-sign");
-const {signWindowsBinaryOrPackage} = require("./signing/sign-windows");
+import {notarize} from "@electron/notarize";
+import {sign} from "@electron/osx-sign";
+import packager from "@electron/packager";
+import {populateIgnoredPaths} from "@electron/packager/dist/copy-filter.js";
+import {makeUniversalApp} from "@electron/universal";
+import debug from "debug";
+import fs from "node:fs";
+import path from "node:path";
+import {SemVer} from "semver";
+import {
+  getChannelName,
+  getTitlecaseChannelName,
+  hasChannelName,
+} from "./packaging/common.js";
+import {signWindowsBinaryOrPackage} from "./signing/sign-windows.js";
 
 const DEV_ENV = process.env.DEV_ENV;
+const log = debug("dist-electron");
 
 let packageName = "";
 
@@ -56,7 +59,7 @@ function allow(directory, pattern) {
   };
 }
 
-async function package(pkg, os, flavour) {
+async function buildPackage(pkg, os, flavour) {
   const options = {};
   populateIgnoredPaths(options);
 
@@ -66,7 +69,7 @@ async function package(pkg, os, flavour) {
   const allowances = Object.entries(pkg.electron.dist.include || {}).map(
     ([directory, pattern]) => allow(directory, new RegExp(pattern, "u")),
   );
-  debug("#Rules:", allowances.length);
+  log("#Rules:", allowances.length);
 
   packageName = osConfig["name"];
   let executableName = osConfig["executableName"];
@@ -75,8 +78,8 @@ async function package(pkg, os, flavour) {
 
   const prereleaseChannel = version.prerelease;
   if (typeof prereleaseChannel[0] === "string" && prereleaseChannel[0] !== "") {
-    packageName += ` ${common.getTitlecaseChannelName()}`;
-    executableName += `-${common.getChannelName()}`;
+    packageName += ` ${getTitlecaseChannelName()}`;
+    executableName += `-${getChannelName()}`;
   }
 
   // Package
@@ -86,8 +89,15 @@ async function package(pkg, os, flavour) {
     // The exectable name does not apply to macOS. For macOS the name is used.
     executableName,
     appBundleId: executableName,
-    dir: resolve(__dirname, "..", "app"),
-    out: resolve(__dirname, "..", "app", "build", "dist-electron", "packaged"),
+    dir: path.resolve(import.meta.dirname, "..", "app"),
+    out: path.resolve(
+      import.meta.dirname,
+      "..",
+      "app",
+      "build",
+      "dist-electron",
+      "packaged",
+    ),
     prune: true,
     overwrite: true,
     asar: true,
@@ -101,13 +111,13 @@ async function package(pkg, os, flavour) {
     ignore: (path_) => {
       // Deny: Default rules from electron-packager
       if (options.ignore.some((rule) => path_.match(rule))) {
-        debug(" !", path_);
+        log(" !", path_);
         return true;
       }
 
       // Deny: dotfiles
       if (path_.match(/\/\..+$/u)) {
-        debug(" !", path_);
+        log(" !", path_);
         return true;
       }
 
@@ -116,15 +126,15 @@ async function package(pkg, os, flavour) {
         switch (command(path_)) {
           case "allow":
             // Allowed: Continue walking recursively
-            debug(" +", path_);
+            log(" +", path_);
             return false;
           case "deny":
             // Denied: Stop walking recursively
-            debug(" -", path_);
+            log(" -", path_);
             return true;
           case "continue":
             // No decision: Continue traversing ruleset
-            debug(" ?", path);
+            log(" ?", path);
             break;
           default:
             throw new Error("Unknown reply");
@@ -132,14 +142,14 @@ async function package(pkg, os, flavour) {
       }
 
       // Default: Block
-      debug("  ", path_);
+      log("  ", path_);
       return true;
     },
   });
 
   if (osConfig["platform"] === "darwin") {
-    const universalOutputPath = `${resolve(
-      __dirname,
+    const universalOutputPath = `${path.resolve(
+      import.meta.dirname,
       "..",
       "app",
       "build",
@@ -148,7 +158,7 @@ async function package(pkg, os, flavour) {
       `${packageName}-darwin-universal`,
     )}`;
 
-    await makeUniversalApp.makeUniversalApp({
+    await makeUniversalApp({
       x64AppPath: `${outputPaths[0]}/${packageName}.app`,
       arm64AppPath: `${outputPaths[1]}/${packageName}.app`,
       outAppPath: `${universalOutputPath}/${packageName}.app`,
@@ -159,9 +169,8 @@ async function package(pkg, os, flavour) {
 
     if (!(DEV_ENV === "development")) {
       for (const outputPath of outputPaths) {
-        await macOSSign(outputPath, osConfig);
-
-        await macOSNotarize(executableName, outputPath, osConfig);
+        await macOSSign(outputPath);
+        await macOSNotarize(outputPath);
       }
     }
   }
@@ -181,7 +190,7 @@ async function package(pkg, os, flavour) {
   console.info(`Packaged: ${outputPaths}`);
 }
 
-async function macOSNotarize(executableName, outputPath, osConfig) {
+async function macOSNotarize(outputPath) {
   console.log(`Start notarizing at ${new Date().toLocaleTimeString()}`);
   console.log(
     "Notarization can take a long time. Expect anything between 2 and 35 minutes. ",
@@ -197,10 +206,10 @@ async function macOSNotarize(executableName, outputPath, osConfig) {
   console.log(`Finished notarizing at ${new Date().toLocaleTimeString()}`);
 }
 
-async function macOSSign(outputPath, osConfig) {
+async function macOSSign(outputPath) {
   console.log("Start signing");
 
-  await OSXSign.signAsync({
+  await sign({
     "app": path.join(`${outputPath}`, `${packageName}.app`),
     "identity": "Developer ID Application: Threema GmbH (DL5SR3PBJC)",
     "entitlements": "app/src/entitlements.plist",
@@ -215,20 +224,23 @@ async function macOSSign(outputPath, osConfig) {
 function preparePackage(os, flavour) {
   console.log(`Prepare package for ${os} ${flavour}`);
   // Load package.json
-  const pack = resolve(__dirname, "..", "app", "package.json");
+  const pack = path.resolve(import.meta.dirname, "..", "app", "package.json");
   const pkg = JSON.parse(fs.readFileSync(pack));
   const osConfig = pkg.electron.buildConfigs[os][flavour];
 
   packageName = osConfig["name"];
   let executableName = osConfig["executableName"];
 
-  if (common.hasChannelName()) {
-    packageName += ` ${common.getTitlecaseChannelName()}`;
-    executableName += `-${common.getChannelName()}`;
+  if (hasChannelName()) {
+    packageName += ` ${getTitlecaseChannelName()}`;
+    executableName += `-${getChannelName()}`;
   }
 
   const conf = JSON.parse(
-    fs.readFileSync(resolve(__dirname, "..", "app", "package.json"), "utf8"),
+    fs.readFileSync(
+      path.resolve(import.meta.dirname, "..", "app", "package.json"),
+      "utf8",
+    ),
   );
   conf.name = executableName;
   conf.executableName = packageName;
@@ -236,13 +248,13 @@ function preparePackage(os, flavour) {
   conf.flavour = flavour;
   conf.appAge = Date.now();
   fs.writeFileSync(
-    resolve(__dirname, "..", "app", "package.json"),
+    path.resolve(import.meta.dirname, "..", "app", "package.json"),
     JSON.stringify(conf),
     "utf8",
   );
   fs.copyFileSync(
-    resolve(__dirname, "..", "app", "package.json"),
-    resolve(__dirname, "..", "app", "dist", "package.json"),
+    path.resolve(import.meta.dirname, "..", "app", "package.json"),
+    path.resolve(import.meta.dirname, "..", "app", "dist", "package.json"),
   );
 }
 
@@ -257,7 +269,7 @@ async function main() {
   preparePackage(os, flavour);
 
   // Load package.json
-  const pack = resolve(__dirname, "..", "app", "package.json");
+  const pack = path.resolve(import.meta.dirname, "..", "app", "package.json");
   const pkg = JSON.parse(fs.readFileSync(pack));
 
   if (os === `windows`) {
@@ -266,13 +278,11 @@ async function main() {
     );
   }
   try {
-    await package(pkg, os, flavour);
+    await buildPackage(pkg, os, flavour);
   } catch (error) {
     console.log(`Could not create package because of an error: ${error}`);
     process.exit(1);
   }
 }
 
-if (require.main === module) {
-  main();
-}
+main();

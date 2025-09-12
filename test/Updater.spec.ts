@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {Updater} from "../app/src/updater/updater";
+import {Updater} from "../app/src/updater/updater.ts";
 
 describe("checkSmallerVersionNumber", () => {
   describe("Test Version Compare 1", () => {

@@ -1,16 +1,14 @@
-import * as electron from "electron";
-// eslint-disable-next-line @typescript-eslint/naming-convention
-import * as ChildProcess from "child_process";
-import {format as formatUrl} from "url";
-import * as path from "path";
-// eslint-disable-next-line @typescript-eslint/naming-convention
-import * as Updater from "./updater/updater";
-import * as pack from "../package.json";
-import * as log from "electron-log";
-import {I18n} from "./i18n/i18n";
-import {getMenu} from "./menu";
+import electron from "electron";
 import contextMenu from "electron-context-menu";
-import {showOutdatedDialog, appIsValid} from "./appAgeValidityChecker";
+import log from "electron-log";
+import {spawn as spawnChildProcess} from "node:child_process";
+import path from "node:path";
+import {format as formatUrl} from "node:url";
+import packageJson from "../package.json" with {type: "json"};
+import {appIsValid, showOutdatedDialog} from "./appAgeValidityChecker.js";
+import {I18n} from "./i18n/i18n.js";
+import {getMenu} from "./menu.js";
+import {Updater} from "./updater/updater.js";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 const SECOND = 1000;
@@ -85,7 +83,7 @@ electron.ipcMain.on("app-data-store:get-value", (event, arg) => {
 
 // Check for, download and prompt to install updates.
 // Downloaded updates are automatically applied on the next launch through Squirrel.
-function checkForUpdates(updater: Updater.Updater): void {
+function checkForUpdates(updater: Updater): void {
   // Windows builds cannot apply updates on the first run
   if (process.argv[1] !== "--squirrel-firstrun") {
     const locale = new I18n(electron.app.getLocale());
@@ -124,7 +122,7 @@ async function start(session: electron.Session): Promise<void> {
     electron.app.getAppPath(),
     "dist",
     "src",
-    "preload.js",
+    "preload.cjs",
   );
 
   const windowWidth = 1000;
@@ -132,7 +130,7 @@ async function start(session: electron.Session): Promise<void> {
   window = new electron.BrowserWindow({
     width: windowWidth + 1,
     height: 800,
-    title: pack.executableName,
+    title: packageJson.executableName,
     icon: getIconLocation(),
     webPreferences: {
       // Order from https://www.electronjs.org/docs/latest/api/browser-window/
@@ -197,10 +195,10 @@ async function start(session: electron.Session): Promise<void> {
     (process.platform === "win32" || process.platform === "darwin")
   ) {
     // We check for updates on launch and after that every hour
-    const updater = new Updater.Updater(
+    const updater = new Updater(
       electron.app.getVersion(),
       electron.app.getPath("temp"),
-      pack.serverKeyset,
+      packageJson.serverKeyset,
       electron.autoUpdater,
       electron.powerMonitor,
     );
@@ -222,7 +220,7 @@ async function start(session: electron.Session): Promise<void> {
 
   //Set custom user agent
   const oldUserAgent = window.webContents.getUserAgent();
-  const currVersion = pack.version;
+  const currVersion = packageJson.version;
   const newUserAgent = `${process.platform}ThreemaDesktop/${currVersion}-${oldUserAgent}`;
   window.webContents.userAgent = newUserAgent;
   log.info(`Setting user agent to ${newUserAgent}.`);
@@ -233,7 +231,7 @@ async function start(session: electron.Session): Promise<void> {
   log.debug(`Running in mode: ${process.env.NODE_ENV}`);
   log.info(`Serving app from ${url}`);
 
-  window.setTitle(pack.executableName);
+  window.setTitle(packageJson.executableName);
 
   setupMenu(new I18n(electron.app.getLocale()));
 
@@ -464,8 +462,9 @@ function maybeParseUrl(url: string): undefined | URL {
 }
 
 function getIconLocation(): string {
-  const flavour = pack.flavour;
+  const flavour = packageJson.flavour;
   const appPath = electron.app.getAppPath();
+  // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
   switch (process.platform) {
     case "win32":
       return path.join(appPath, "assets", "icons", "win32", `${flavour}.ico`);
@@ -520,6 +519,7 @@ async function setMinimalAsDefault(): Promise<void> {
         false,
       );
     } else {
+      // eslint-disable-next-line @typescript-eslint/no-base-to-string
       log.error(`Already set theme to ${settingsUserInterface}`);
     }
   } else {
@@ -539,7 +539,7 @@ function getWebLocation(): string {
       "dependencies",
       "threema-web",
       "release",
-      pack.threemaWebVersion,
+      packageJson.threemaWebVersion,
       "index.html",
     ),
     protocol: "file:",
@@ -558,7 +558,7 @@ function setupMenu(locale: I18n): void {
 }
 
 async function checkValidity(): Promise<void> {
-  if (!appIsValid(pack.appAge)) {
+  if (!appIsValid(packageJson.appAge)) {
     const locale = new I18n(electron.app.getLocale());
     await showOutdatedDialog(electron.app, electron.dialog, locale);
   }
@@ -611,7 +611,7 @@ function handleSquirrelEvent(): boolean {
     let spawnedProcess;
 
     try {
-      spawnedProcess = ChildProcess.spawn(command, args, {
+      spawnedProcess = spawnChildProcess(command, args, {
         detached: true,
       });
     } catch (error) {

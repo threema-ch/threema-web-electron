@@ -1,18 +1,23 @@
-const execFileSync = require("child_process").execFileSync;
-const fs = require("fs");
-const common = require("./common");
+import {execFileSync} from "node:child_process";
+import fs from "node:fs";
+import {
+  getChannelName,
+  getPackage,
+  getTitlecaseChannelName,
+  hasChannelName,
+} from "./common.js";
 
 function main() {
   const myArgs = process.argv.slice(2);
-  const pkg = common.getPackage();
+  const pkg = getPackage();
   const configs = pkg.electron.buildConfigs;
 
   let appDirName = configs["macOS"][myArgs[0]]["name"];
   let outDirName = configs["macOS"][myArgs[0]]["zipName"];
 
-  if (common.hasChannelName()) {
-    appDirName += ` ${common.getTitlecaseChannelName()}`;
-    outDirName += `-${common.getChannelName()}.zip`;
+  if (hasChannelName()) {
+    appDirName += ` ${getTitlecaseChannelName()}`;
+    outDirName += `-${getChannelName()}.zip`;
   }
 
   console.log(`Creating package for ${appDirName} (this may take a while)`);
