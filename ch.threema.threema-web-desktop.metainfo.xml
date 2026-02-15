@@ -4,7 +4,7 @@
   <id>ch.threema.threema-web-desktop</id>
   <name>Threema</name>
   <project_license>AGPL-3.0</project_license>
-  <summary>Threema for desktop is a desktop client for Threema, a  privacy-focused end-to-end encrypted mobile messenger hosted and developed 
+  <summary>Threema for desktop is a desktop client for Threema, a privacy-focused end-to-end encrypted mobile messenger hosted and developed 
   in Switzerland.</summary>
   <url type="homepage">https://threema.ch/</url>
   <url type="help">https://threema.ch/support</url>
