@@ -2,7 +2,7 @@ import electron, {type MessageBoxOptions} from "electron";
 import log from "electron-log";
 import type {I18n} from "./i18n/i18n.js";
 
-const hundredEightyDaysInMs = 180 * 24 * 60 * 60 * 1000;
+const oneYearInMs = 360 * 24 * 60 * 60 * 1000;
 
 export async function showOutdatedDialog(
   app: Electron.App,
@@ -33,7 +33,7 @@ export async function showOutdatedDialog(
 }
 
 export function appIsValid(appAge: number): boolean {
-  return Date.now() - appAge < hundredEightyDaysInMs;
+  return Date.now() - appAge < oneYearInMs;
 }
 
 function getDialogOpts(locale: I18n): MessageBoxOptions {

@@ -24,6 +24,14 @@
     </screenshot>
   </screenshots>
   <releases>
+    <release version="1.2.50" date="2026-03-09">
+      <description>
+        <ul>
+          <li>Miscellaneous minor improvements and bug fixes</li>
+        </ul>
+      </description>
+      <url>https://threema.ch/en/whats-new#web_desktop_1250</url>
+    </release>
     <release version="1.2.49" date="2025-09-12">
       <description>
         <ul>
